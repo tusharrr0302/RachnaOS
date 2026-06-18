@@ -15,16 +15,8 @@ const CONTENT_TYPES = [
   { id: 'story', label: 'Story / Post', desc: 'Social post or story' },
 ]
 
-const SERVICE_CATEGORIES = [
-  { id: 'video-editing', label: 'Video Editing', icon: '🎬', desc: 'Long form, shorts, reels editing and more' },
-  { id: 'thumbnail', label: 'Thumbnail Design', icon: '🖼️', desc: 'YouTube thumbnails, banners, covers' },
-  { id: 'script', label: 'Script Writing', icon: '📝', desc: 'YouTube scripts, video captions, stories' },
-  { id: 'voiceover', label: 'Voice Over', icon: '🎤', desc: 'Voice over, dubbing, narration' },
-  { id: 'motion', label: 'Motion Graphics', icon: '✨', desc: 'Animations, lower thirds, transitions' },
-  { id: 'seo', label: 'YouTube SEO', icon: '🔍', desc: 'Titles, tags, description, SEO optimization' },
-  { id: 'channel', label: 'Channel Management', icon: '📊', desc: 'Upload, management, video scheduling' },
-  { id: 'other', label: 'Other', icon: '⋯', desc: 'Other services not listed' },
-]
+
+
 
 function RateResult({ result }) {
   const [copied, setCopied] = useState(false)
@@ -126,8 +118,6 @@ function RateResult({ result }) {
 }
 
 export default function FairRatePage() {
-  const [step, setStep] = useState(1)
-  const [selectedCategory, setSelectedCategory] = useState('')
   const [platform, setPlatform] = useState('YouTube')
   const [niche, setNiche] = useState('')
   const [subscribers, setSubscribers] = useState(100000)
@@ -184,55 +174,14 @@ export default function FairRatePage() {
         <p className="text-rachna-muted text-sm">AI-powered pricing based on real market data from 10K+ creator projects.</p>
       </div>
 
-      {/* Step tabs */}
-      <div className="flex items-center gap-1 mb-8 bg-white border border-rachna-border rounded-2xl p-1.5 w-fit">
-        {[
-          { n: 1, label: 'What do you need?' },
-          { n: 2, label: 'Project Details' },
-          { n: 3, label: 'Requirements' },
-          { n: 4, label: 'Market Estimate' },
-        ].map((s) => (
-          <button
-            key={s.n}
-            onClick={() => setStep(s.n)}
-            className={clsx(
-              'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all',
-              step === s.n ? 'bg-rachna-indigo text-white' : 'text-rachna-muted hover:text-rachna-dark'
-            )}
-          >
-            <span className={clsx('w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold', step === s.n ? 'bg-white/20 text-white' : 'bg-rachna-surface text-rachna-muted')}>{s.n}</span>
-            {s.label}
-          </button>
-        ))}
-      </div>
+
+
 
       <div className="grid lg:grid-cols-5 gap-8">
         {/* Left — Form */}
         <div className="lg:col-span-3 space-y-6">
-          {/* Category selection */}
-          <div className="bg-white rounded-3xl border border-rachna-border p-7">
-            <h3 className="font-display font-semibold text-rachna-dark text-base mb-2">What do you need?</h3>
-            <p className="text-sm text-rachna-muted mb-5">Select a category to get an accurate price estimate.</p>
-            <div className="grid grid-cols-2 gap-3">
-              {SERVICE_CATEGORIES.map(cat => (
-                <button
-                  key={cat.id}
-                  id={`category-${cat.id}`}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={clsx(
-                    'p-4 rounded-2xl border-2 text-left transition-all duration-200',
-                    selectedCategory === cat.id
-                      ? 'border-rachna-indigo bg-rachna-lavender'
-                      : 'border-rachna-border hover:border-rachna-violet hover:bg-rachna-surface'
-                  )}
-                >
-                  <span className="text-2xl mb-2 block">{cat.icon}</span>
-                  <p className="text-sm font-display font-semibold text-rachna-dark">{cat.label}</p>
-                  <p className="text-xs text-rachna-muted mt-0.5 leading-tight">{cat.desc}</p>
-                </button>
-              ))}
-            </div>
-          </div>
+
+
 
           {/* Project details */}
           <div className="bg-white rounded-3xl border border-rachna-border p-7">
