@@ -2,8 +2,8 @@
 // 3-step wizard: role → profile → username+bio
 // After step 3: POST /api/auth/set-role → Supabase upsert → navigate to dashboard
 
-import { useState } from 'react'
-import { useUser } from '@clerk/clerk-react'
+import { useState, useEffect } from 'react'
+import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, ChevronRight, Upload, Loader2 } from 'lucide-react'
@@ -78,7 +78,17 @@ const ROLE_DASHBOARD = {
 
 export default function OnboardingPage() {
   const { user } = useUser()
+  const { getToken } = useClerkAuth()
   const navigate  = useNavigate()
+
+  // Already onboarded → skip wizard, go to dashboard
+  useEffect(() => {
+    const onboardingDone = user?.publicMetadata?.onboarding_done
+    const role = user?.publicMetadata?.role
+    if (onboardingDone && role) {
+      navigate(ROLE_DASHBOARD[role] || '/', { replace: true })
+    }
+  }, [user?.publicMetadata?.onboarding_done, user?.publicMetadata?.role])
 
   const [step, setSaveStep] = useState(0)
   const [role, setRole]     = useState('')
@@ -134,7 +144,7 @@ export default function OnboardingPage() {
 
     try {
       // 1. Get Clerk JWT
-      const token = await user.getToken()
+      const token = await getToken()
 
       // 2. Set role in Clerk public metadata via backend
       await axios.post(

@@ -9,8 +9,8 @@ export function useAuth() {
   const { user, isLoaded, isSignedIn } = useUser()
   const { getToken, signOut } = useClerkAuth()
 
-  const [profile, setProfile] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [profile, setProfile]   = useState(null)
+  const [loading, setLoading]   = useState(false) // default false — only true when fetching
 
   // Role comes from Clerk public metadata — set during onboarding
   const role = user?.publicMetadata?.role || null
@@ -19,6 +19,7 @@ export function useAuth() {
   const onboardingDone = user?.publicMetadata?.onboarding_done || false
 
   useEffect(() => {
+    // Not signed in → no fetch needed
     if (!isLoaded || !isSignedIn || !user) {
       setLoading(false)
       return
@@ -43,27 +44,19 @@ export function useAuth() {
     }
   }
 
-  // Get a fresh Clerk JWT for authenticated API calls
   async function getAuthToken() {
     return await getToken()
   }
 
   return {
-    // Clerk data
-    clerkUser:    user,
+    clerkUser:      user,
     isLoaded,
     isSignedIn,
-
-    // Role & onboarding
-    role,           // 'creator' | 'freelancer' | 'manager' | null
+    role,
     onboardingDone,
-
-    // Supabase profile
     profile,
     loading,
     refetchProfile: fetchProfile,
-
-    // Actions
     getAuthToken,
     signOut,
   }
