@@ -5,7 +5,8 @@ const express     = require('express')
 const cors        = require('cors')
 const rateLimit   = require('express-rate-limit')
 
-const authRouter  = require('./src/features/auth/auth.router')
+const authRouter        = require('./src/features/auth/auth.router')
+const audienceLabRouter = require('./src/features/audiencelab/router')
 
 const app  = express()
 const PORT = process.env.PORT || 5000
@@ -39,7 +40,8 @@ app.use(rateLimit({
 app.get('/health', (req, res) => res.json({ status: 'ok', env: process.env.NODE_ENV || 'development' }))
 
 // ── Routes ───────────────────────────────────────────────────────────
-app.use('/api/auth', authRouter)
+app.use('/api/auth',        authRouter)
+app.use('/api/audiencelab', audienceLabRouter)
 
 // Example of a protected, role-gated route:
 // const { authenticate, attachRole } = require('./src/middleware/authenticate')
