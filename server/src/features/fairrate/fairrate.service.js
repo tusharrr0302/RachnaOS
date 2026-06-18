@@ -88,18 +88,28 @@ Brand Offer: ${brandOffer ? '₹' + brandOffer : 'None'}`
   } catch (error) {
     console.error('[FairRate AI] Error calling OpenAI:', error.message)
     // Fallback if OpenAI fails (e.g. quota exceeded) to demonstrate the UI
-    console.log('[FairRate AI] Falling back to mock AI response due to API error.')
+    console.log('[FairRate AI] Falling back to dynamic mock AI response due to API error.')
+    
+    // Dynamic mock logic so the UI reacts to inputs
+    const baseValue = Math.round((followers * (engagementRate / 100)) * 0.45)
+    const multiplier = niche === 'Finance' || niche === 'Tech' ? 1.5 : 1.2
+    const calculatedFair = Math.round((baseValue * multiplier) / 100) * 100 || 10000 // avoid 0
+    const mockMin = Math.round(calculatedFair * 0.8)
+    const mockMax = Math.round(calculatedFair * 1.3)
+    
+    const isOfferLow = brandOffer && brandOffer < mockMin
+
     aiResult = {
-      marketRange: "₹12,000 - ₹18,000",
-      dealScore: 35,
-      recommendation: "Counter Offer",
+      marketRange: `₹${mockMin.toLocaleString('en-IN')} - ₹${mockMax.toLocaleString('en-IN')}`,
+      dealScore: isOfferLow ? 35 : 85,
+      recommendation: isOfferLow ? "Counter Offer" : "Accept Offer",
       reasons: [
-        "Finance creators generally command premium sponsorship rates",
-        "Engagement rate is above average",
-        "Current offer appears significantly below estimated market value"
+        `${niche} creators generally command ${multiplier > 1.2 ? 'premium' : 'standard'} sponsorship rates`,
+        `Engagement rate of ${engagementRate}% is factored into the valuation`,
+        isOfferLow ? "Current offer appears significantly below estimated market value" : "The offer is well within the fair market range"
       ],
-      negotiationAdvice: "Counter between ₹14,000 and ₹16,000",
-      negotiationScript: "Thank you for the opportunity. Based on the campaign scope, audience engagement, and industry benchmarks, my standard rate for this deliverable falls within the ₹14,000–₹16,000 range. I would be happy to discuss further."
+      negotiationAdvice: isOfferLow ? `Counter between ₹${Math.round((mockMin + mockMax)/2).toLocaleString('en-IN')} and ₹${mockMax.toLocaleString('en-IN')}` : "Accept the offer or slightly negotiate for better terms",
+      negotiationScript: `Thank you for the opportunity. Based on my audience size and ${engagementRate}% engagement rate, my standard rate for a ${contentType} falls within the ₹${Math.round((mockMin + mockMax)/2).toLocaleString('en-IN')}–₹${mockMax.toLocaleString('en-IN')} range. I would be happy to discuss further.`
     }
   }
 
