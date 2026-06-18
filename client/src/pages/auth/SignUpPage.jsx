@@ -1,6 +1,4 @@
 // client/src/pages/auth/SignUpPage.jsx
-// Two-panel: brand left, Clerk <SignUp /> right.
-// Role selection happens in Onboarding — here user just creates a Clerk account.
 
 import { SignUp } from '@clerk/clerk-react'
 import { Link } from 'react-router-dom'
@@ -91,7 +89,8 @@ export default function SignUpPage() {
             path="/sign-up"
             routing="path"
             signInUrl="/sign-in"
-            afterSignUpUrl="/onboarding"
+            fallbackRedirectUrl="/auth/redirect"
+            forceRedirectUrl="/auth/redirect"
             appearance={{
               elements: {
                 rootBox: { width: '100%' },

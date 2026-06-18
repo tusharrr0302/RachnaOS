@@ -1,5 +1,4 @@
 // client/src/pages/auth/SignInPage.jsx
-// Two-panel: brand left, Clerk <SignIn /> right.
 
 import { SignIn } from '@clerk/clerk-react'
 import { Link } from 'react-router-dom'
@@ -81,12 +80,12 @@ export default function SignInPage() {
             </p>
           </div>
 
-          {/* Clerk handles everything — email, Google, magic link, etc. */}
           <SignIn
             path="/sign-in"
             routing="path"
             signUpUrl="/sign-up"
-            afterSignInUrl="/onboarding"
+            fallbackRedirectUrl="/auth/redirect"
+            forceRedirectUrl="/auth/redirect"
             appearance={{
               elements: {
                 rootBox: { width: '100%' },

@@ -14,6 +14,7 @@ import LandingPage    from './pages/LandingPage'
 import SignInPage     from './pages/auth/SignInPage'
 import SignUpPage     from './pages/auth/SignUpPage'
 import OnboardingPage from './pages/auth/OnboardingPage'
+import AuthRedirectPage from './pages/auth/AuthRedirectPage'
 
 // Creator pages (lazy)
 const WorkspaceListPage    = lazy(() => import('./features/workspace/WorkspaceListPage'))
@@ -65,6 +66,9 @@ export default function App() {
           {/* ── AUTH (Clerk handles these) ────────────── */}
           <Route path="/sign-in/*" element={<SignInPage />} />
           <Route path="/sign-up/*" element={<SignUpPage />} />
+
+          {/* ── POST-AUTH SMART REDIRECT ──────────────── */}
+          <Route path="/auth/redirect" element={<AuthRedirectPage />} />
 
           {/* ── ONBOARDING (must be logged in) ────────── */}
           <Route
