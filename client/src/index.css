@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --rachna-cream:    #FFF8E1;
+  --rachna-indigo:   #4540C8;
+  --rachna-violet:   #9B7FD8;
+  --rachna-lavender: #EDE9FF;
+  --rachna-dark:     #0F0E24;
+  --rachna-muted:    #8B89B0;
+  --rachna-surface:  #F7F7FD;
+  --rachna-border:   #E5E3F8;
+  --rachna-success:  #1D9E75;
+  --rachna-warning:  #F59E0B;
+  --rachna-danger:   #EF4444;
+}
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-body text-rachna-dark bg-rachna-surface antialiased;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-rachna-indigo text-white font-display font-600 px-6 py-3 rounded-xl text-sm transition-all duration-200 hover:bg-opacity-90 hover:shadow-card-lg hover:-translate-y-0.5 active:translate-y-0;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 border border-rachna-border text-rachna-dark font-display font-600 px-6 py-3 rounded-xl text-sm transition-all duration-200 hover:border-rachna-indigo hover:text-rachna-indigo hover:bg-rachna-lavender;
+  }
+  .btn-outline-white {
+    @apply inline-flex items-center gap-2 border border-white/40 text-white font-display font-600 px-6 py-3 rounded-xl text-sm transition-all duration-200 hover:bg-white/10;
+  }
+  .btn-indigo-solid {
+    @apply inline-flex items-center gap-2 bg-rachna-indigo text-white font-display font-semibold px-5 py-2.5 rounded-lg text-sm transition-all duration-200 hover:bg-indigo-700 hover:shadow-glow;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-2xl shadow-card border border-rachna-border p-6;
+  }
+  .card-hover {
+    @apply card transition-all duration-200 hover:shadow-card-lg hover:-translate-y-1;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center gap-1.5 bg-rachna-lavender text-rachna-indigo text-xs font-display font-600 px-3 py-1 rounded-full;
+  }
+  .badge-success {
+    @apply inline-flex items-center gap-1.5 bg-green-50 text-rachna-success text-xs font-semibold px-3 py-1 rounded-full;
+  }
+  .badge-danger {
+    @apply inline-flex items-center gap-1.5 bg-red-50 text-rachna-danger text-xs font-semibold px-3 py-1 rounded-full;
+  }
+  .badge-warning {
+    @apply inline-flex items-center gap-1.5 bg-amber-50 text-rachna-warning text-xs font-semibold px-3 py-1 rounded-full;
+  }
+
+  /* Section */
+  .section {
+    @apply py-20 px-6 max-w-7xl mx-auto;
+  }
+  .section-full {
+    @apply py-20 px-6;
+  }
+
+  /* Stat block */
+  .stat-number {
+    @apply font-display font-extrabold text-5xl tabular-nums leading-none;
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full bg-white border border-rachna-border rounded-xl px-4 py-3 text-rachna-dark text-sm placeholder:text-rachna-muted focus:outline-none focus:ring-2 focus:ring-rachna-indigo/30 focus:border-rachna-indigo transition-all duration-200;
+  }
+
+  /* Nav link */
+  .nav-link {
+    @apply text-rachna-muted text-sm font-medium hover:text-rachna-indigo transition-colors duration-150;
+  }
+}
+
+@layer utilities {
+  .font-600 {
+    font-weight: 600;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* Glassmorphism */
+  .glass {
+    @apply backdrop-blur-xl bg-white/70 border border-white/40;
+  }
+  .glass-dark {
+    @apply backdrop-blur-xl bg-rachna-dark/80 border border-white/10;
+  }
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-rachna-gradient;
+  }
+  /* Scrollbar hide */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Custom scrollbar (sidebar) */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E5E3F8;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9B7FD8;
+}
