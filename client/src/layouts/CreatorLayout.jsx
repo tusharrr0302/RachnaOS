@@ -4,11 +4,9 @@ import {
   Home, Layers, FlaskConical, DollarSign, ShieldCheck,
   Users, ShoppingBag, BookOpen, BarChart3, Settings,
   Plus, ChevronLeft, Bell, HelpCircle, Zap, ChevronDown,
-  FileText, Tag, Users2, Bot, GraduationCap
+  FileText, Tag, Users2, Bot, GraduationCap, LogOut, RefreshCw
 } from 'lucide-react'
-import { UserButton } from '@clerk/clerk-react'
-import { useState as useMenuState } from 'react'
-import { LogOut, RefreshCw } from 'lucide-react'
+import { UserButton, useClerk } from '@clerk/clerk-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { useAuth } from '../auth'
@@ -29,15 +27,15 @@ const NAV_ITEMS = [
   { icon: Bot,           label: 'AI Assistant',    path: '/creator/ai' },
 ]
 
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
-const isMockMode = !PUBLISHABLE_KEY || PUBLISHABLE_KEY.includes('your_key_here') || PUBLISHABLE_KEY.includes('pk_test_your_key_here')
-
 export default function CreatorLayout() {
   const [collapsed, setCollapsed] = useState(false)
-  const [mockMenuOpen, setMockMenuOpen] = useMenuState(false)
+  const [mockMenuOpen, setMockMenuOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
-  const { clerkUser, profile, signOut, isMock, updateMockProfile, setIsSignedIn } = useAuth()
+  const { clerkUser, profile, signOut: authSignOut, isMock, updateMockProfile, setIsSignedIn } = useAuth()
+  const { signOut: clerkSignOut } = useClerk()
+
+  const signOut = isMock ? authSignOut : clerkSignOut
 
   // Canvas routes need overflow-hidden so React Flow fills full height
   const isCanvasRoute = /^\/creator\/workspace\/.+/.test(location.pathname)
@@ -188,7 +186,10 @@ export default function CreatorLayout() {
               )}
             </>
           ) : (
-            <UserButton afterSignOutUrl="/sign-in" />
+            <UserButton
+              afterSignOutUrl="/sign-in"
+              appearance={{ elements: { avatarBox: { width: 32, height: 32 } } }}
+            />
           )}
           <AnimatePresence>
             {!collapsed && (
@@ -232,6 +233,15 @@ export default function CreatorLayout() {
             <button className="w-9 h-9 rounded-xl hover:bg-rachna-surface flex items-center justify-center transition-colors relative">
               <Bell size={18} className="text-rachna-muted" />
               <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rachna-danger rounded-full" />
+            </button>
+            <div className="w-px h-5 bg-rachna-border mx-1" />
+            <button
+              id="creator-signout"
+              onClick={() => isMock ? (signOut(), navigate('/sign-in')) : signOut(() => navigate('/sign-in'))}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-rachna-muted hover:text-rachna-danger hover:bg-red-50 transition-colors"
+            >
+              <LogOut size={14} />
+              Sign out
             </button>
           </div>
         </header>
