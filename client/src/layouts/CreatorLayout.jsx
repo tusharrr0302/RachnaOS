@@ -6,8 +6,10 @@ import {
   Plus, ChevronLeft, Bell, HelpCircle, Zap, ChevronDown,
   FileText, Tag, Users2, Bot, GraduationCap
 } from 'lucide-react'
+import { UserButton } from '@clerk/clerk-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
+import { useAuth } from '../auth'
 
 const NAV_ITEMS = [
   { icon: Home,          label: 'Home',            path: '/creator' },
@@ -29,6 +31,7 @@ export default function CreatorLayout() {
   const [collapsed, setCollapsed] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const { clerkUser, profile } = useAuth()
 
   // Canvas routes need overflow-hidden so React Flow fills full height
   const isCanvasRoute = /^\/creator\/workspace\/.+/.test(location.pathname)
@@ -148,9 +151,7 @@ export default function CreatorLayout() {
           'border-t border-rachna-border px-3 py-4 flex items-center gap-3',
           collapsed && 'justify-center'
         )}>
-          <div className="w-8 h-8 rounded-full bg-rachna-indigo/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
-            <span className="text-rachna-indigo font-semibold text-sm">A</span>
-          </div>
+          <UserButton afterSignOutUrl="/sign-in" />
           <AnimatePresence>
             {!collapsed && (
               <motion.div
@@ -159,12 +160,13 @@ export default function CreatorLayout() {
                 exit={{ opacity: 0 }}
                 className="flex-1 min-w-0"
               >
-                <p className="text-sm font-semibold text-rachna-dark truncate">Ankit Verma</p>
-                <p className="text-xs text-rachna-muted">Creator</p>
+                <p className="text-sm font-semibold text-rachna-dark truncate">
+                  {profile?.display_name || clerkUser?.firstName || 'Creator'}
+                </p>
+                <p className="text-xs text-rachna-muted capitalize">Creator</p>
               </motion.div>
             )}
           </AnimatePresence>
-          {!collapsed && <ChevronDown size={14} className="text-rachna-muted flex-shrink-0" />}
         </div>
 
         {/* Collapse toggle */}
