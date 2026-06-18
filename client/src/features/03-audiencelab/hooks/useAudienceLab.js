@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { useAuth } from '../../../auth/useAuth'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL
 
 export function useAudienceLab() {
+  const { getAuthToken } = useAuth()
   const [loading, setLoading]           = useState(false)
   const [loadingStep, setLoadingStep]   = useState('')
   const [channelData, setChannelData]   = useState(null)
@@ -20,15 +22,18 @@ export function useAudienceLab() {
     setMomentumReport(null)
 
     try {
+      const token = await getAuthToken()
+      const headers = { Authorization: `Bearer ${token}` }
+
       setLoadingStep('Fetching channel data from YouTube...')
-      const res = await axios.post(`${API_BASE}/audiencelab/analyze`, { youtubeUrl })
+      const res = await axios.post(`${API_BASE}/api/audiencelab/analyze`, { youtubeUrl }, { headers })
       setChannelData(res.data.channelData)
       setAnalysis(res.data.analysis)
 
       setLoadingStep('Running MomentumOS comparison engine...')
-      const momentumRes = await axios.post(`${API_BASE}/audiencelab/momentum`, {
+      const momentumRes = await axios.post(`${API_BASE}/api/audiencelab/momentum`, {
         channelData: res.data.channelData,
-      })
+      }, { headers })
       setMomentumReport(momentumRes.data.momentumReport)
 
       toast.success('Analysis complete! 🎉')

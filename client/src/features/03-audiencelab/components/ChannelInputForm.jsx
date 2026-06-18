@@ -1,7 +1,7 @@
 // client/src/features/03-audiencelab/components/ChannelInputForm.jsx
 
 import { useState } from 'react'
-import { Search, Youtube } from 'lucide-react'
+import { Search, Link } from 'lucide-react'
 
 export default function ChannelInputForm({ onAnalyze, loading }) {
   const [url, setUrl] = useState('')
@@ -27,7 +27,7 @@ export default function ChannelInputForm({ onAnalyze, loading }) {
 
       <div className="flex gap-3 max-w-2xl mx-auto">
         <div className="flex-1 relative">
-          <Youtube size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B6B80]" />
+          <Link size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B6B80]" />
           <input
             type="text"
             value={url}
