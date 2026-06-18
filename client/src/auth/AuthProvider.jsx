@@ -6,13 +6,23 @@ import { ClerkProvider } from '@clerk/clerk-react'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
+const isPlaceholder = (val) => {
+  if (!val) return true
+  return val.includes('your_key_here') || 
+         val.includes('your-project') || 
+         val.includes('your_anon_key_here') || 
+         val.includes('pk_test_your_key_here') ||
+         val.includes('sk_test_your_key_here')
+}
+
+const isMockMode = !PUBLISHABLE_KEY || isPlaceholder(PUBLISHABLE_KEY)
+
 export function AuthProvider({ children }) {
-  if (!PUBLISHABLE_KEY) {
+  if (isMockMode) {
     console.warn(
-      '[RachnaOS] VITE_CLERK_PUBLISHABLE_KEY is not set. ' +
-      'Copy client/.env.example to client/.env and fill in your Clerk key.'
+      '[RachnaOS] VITE_CLERK_PUBLISHABLE_KEY is missing or a placeholder. Running in Mock Auth Mode.'
     )
-    // Render children without Clerk — auth guards will redirect to sign-in
+    // Render children without Clerk
     return <>{children}</>
   }
 

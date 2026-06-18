@@ -7,6 +7,8 @@ import {
   FileText, Tag, Users2, Bot, GraduationCap
 } from 'lucide-react'
 import { UserButton } from '@clerk/clerk-react'
+import { useState as useMenuState } from 'react'
+import { LogOut, RefreshCw } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { useAuth } from '../auth'
@@ -27,11 +29,15 @@ const NAV_ITEMS = [
   { icon: Bot,           label: 'AI Assistant',    path: '/creator/ai' },
 ]
 
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+const isMockMode = !PUBLISHABLE_KEY || PUBLISHABLE_KEY.includes('your_key_here') || PUBLISHABLE_KEY.includes('pk_test_your_key_here')
+
 export default function CreatorLayout() {
   const [collapsed, setCollapsed] = useState(false)
+  const [mockMenuOpen, setMockMenuOpen] = useMenuState(false)
   const navigate = useNavigate()
   const location = useLocation()
-  const { clerkUser, profile } = useAuth()
+  const { clerkUser, profile, signOut, isMock, updateMockProfile, setIsSignedIn } = useAuth()
 
   // Canvas routes need overflow-hidden so React Flow fills full height
   const isCanvasRoute = /^\/creator\/workspace\/.+/.test(location.pathname)
@@ -148,10 +154,42 @@ export default function CreatorLayout() {
 
         {/* User Profile */}
         <div className={clsx(
-          'border-t border-rachna-border px-3 py-4 flex items-center gap-3',
+          'border-t border-rachna-border px-3 py-4 flex items-center gap-3 relative',
           collapsed && 'justify-center'
         )}>
-          <UserButton afterSignOutUrl="/sign-in" />
+          {isMock ? (
+            <>
+              <button
+                onClick={() => setMockMenuOpen(v => !v)}
+                className="w-8 h-8 rounded-full bg-rachna-indigo flex items-center justify-center text-white font-bold text-sm flex-shrink-0 hover:opacity-90 transition-opacity"
+              >
+                {(profile?.display_name || clerkUser?.firstName || 'D')[0].toUpperCase()}
+              </button>
+              {mockMenuOpen && (
+                <div className="absolute bottom-16 left-3 w-52 bg-white border border-rachna-border rounded-2xl shadow-card p-2 z-50">
+                  <p className="text-xs text-rachna-muted px-3 pt-1 pb-2 font-medium truncate">Mock Mode</p>
+                  {['creator','freelancer','manager'].map(r => (
+                    <button
+                      key={r}
+                      onClick={() => { updateMockProfile({ role: r }); setMockMenuOpen(false); navigate(r === 'creator' ? '/creator/workspace' : r === 'freelancer' ? '/freelancer/dashboard' : '/manager/dashboard') }}
+                      className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-xl text-sm hover:bg-rachna-surface transition-colors capitalize"
+                    >
+                      <RefreshCw size={12} className="text-rachna-muted" /> Switch to {r}
+                    </button>
+                  ))}
+                  <div className="border-t border-rachna-border my-1" />
+                  <button
+                    onClick={() => { signOut(); setMockMenuOpen(false); navigate('/sign-in') }}
+                    className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-red-500 hover:bg-red-50 transition-colors"
+                  >
+                    <LogOut size={12} /> Sign Out
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <UserButton afterSignOutUrl="/sign-in" />
+          )}
           <AnimatePresence>
             {!collapsed && (
               <motion.div
@@ -163,7 +201,7 @@ export default function CreatorLayout() {
                 <p className="text-sm font-semibold text-rachna-dark truncate">
                   {profile?.display_name || clerkUser?.firstName || 'Creator'}
                 </p>
-                <p className="text-xs text-rachna-muted capitalize">Creator</p>
+                <p className="text-xs text-rachna-muted capitalize">{profile?.role || 'Creator'}</p>
               </motion.div>
             )}
           </AnimatePresence>

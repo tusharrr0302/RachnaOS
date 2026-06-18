@@ -3,7 +3,7 @@
 // After step 3: POST /api/auth/set-role → Supabase upsert → navigate to dashboard
 
 import { useState, useEffect } from 'react'
-import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react'
+import { useAuth } from '../../auth'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, ChevronRight, Upload, Loader2 } from 'lucide-react'
@@ -77,8 +77,7 @@ const ROLE_DASHBOARD = {
 }
 
 export default function OnboardingPage() {
-  const { user } = useUser()
-  const { getToken } = useClerkAuth()
+  const { clerkUser: user, isMock, updateMockProfile, updateMockOnboarding, getAuthToken } = useAuth()
   const navigate  = useNavigate()
 
   // Already onboarded → skip wizard, go to dashboard
@@ -143,8 +142,46 @@ export default function OnboardingPage() {
     setError('')
 
     try {
+      if (isMock) {
+        updateMockProfile({
+          role,
+          display_name: profile.name,
+          username: username.toLowerCase().trim(),
+          bio,
+          avatar_url: null,
+          onboarding_done: true,
+          ...(role === 'creator' && {
+            niche:       profile.niche,
+            platform:    profile.platform,
+            channel_url: profile.channelUrl,
+            subscribers: parseInt(profile.subscribers) || 0,
+          }),
+          ...(role === 'freelancer' && {
+            skills:        profile.skills,
+            hourly_rate:   parseInt(profile.hourlyRate) || 0,
+            portfolio_url: profile.portfolioUrl,
+          }),
+          ...(role === 'expert' && {
+            skills:       profile.expertise,
+            hourly_rate:  parseInt(profile.ratePerCall) || 0,
+            bio:          profile.expertBio || bio,
+          }),
+          ...(role === 'manager' && {
+            company_name: profile.companyName,
+            bio:          profile.experience || bio,
+          }),
+        })
+        updateMockOnboarding(true)
+        
+        // Short artificial delay for realism
+        await new Promise(resolve => setTimeout(resolve, 800))
+        setSaving(false)
+        navigate(ROLE_DASHBOARD[role] || '/')
+        return
+      }
+
       // 1. Get Clerk JWT
-      const token = await getToken()
+      const token = await getAuthToken()
 
       // 2. Set role in Clerk public metadata via backend
       await axios.post(
