@@ -1,18 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { BookOpen, Play, Lock, Star, Clock, ChevronRight, Award, Search } from 'lucide-react'
+import { FileText, BookOpen, Lock, Star, Clock, ChevronRight, Award, Search } from 'lucide-react'
 import clsx from 'clsx'
 
 const CATEGORIES = ['All', 'Thumbnail', 'Hook Writing', 'SEO', 'Storytelling', 'Monetization', 'Growth']
 
 const MODULES = [
-  { id: '1', title: 'Thumbnail Psychology Masterclass', category: 'Thumbnail', lessons: 12, duration: '4h 30m', rating: 4.9, students: 2341, free: true, progress: 80, instructor: 'Raj Kumar', instructorRole: '1M+ YouTube Creator', description: 'Learn the exact psychology behind high-CTR thumbnails. From color theory to face expressions.' },
-  { id: '2', title: 'Hook Writing for Maximum Retention', category: 'Hook Writing', lessons: 8, duration: '2h 45m', rating: 4.8, students: 1876, free: true, progress: 45, instructor: 'Priya Sharma', instructorRole: 'Viral Content Creator', description: 'Master the first 30 seconds. Every video type, every niche.' },
-  { id: '3', title: 'YouTube SEO Deep Dive 2024', category: 'SEO', lessons: 15, duration: '5h 20m', rating: 4.7, students: 3102, free: false, progress: 20, instructor: 'Vikram T.', instructorRole: 'YouTube Strategist', description: 'Rank #1 for competitive keywords. Full keyword research to metadata optimization.' },
-  { id: '4', title: 'Storytelling Structure for Creators', category: 'Storytelling', lessons: 10, duration: '3h 15m', rating: 4.9, students: 987, free: false, progress: 0, instructor: 'Ananya Roy', instructorRole: 'Filmmaker & Creator', description: 'Hollywood storytelling applied to YouTube. Keep viewers hooked start to finish.' },
-  { id: '5', title: 'Brand Deals 101: From Pitch to Payment', category: 'Monetization', lessons: 9, duration: '3h', rating: 4.6, students: 1543, free: false, progress: 0, instructor: 'Sneha Mehta', instructorRole: 'Brand Deal Expert', description: 'Land your first brand deal, negotiate rates, and protect yourself with contracts.' },
-  { id: '6', title: '0 to 100K: Growth Systems That Work', category: 'Growth', lessons: 18, duration: '7h', rating: 4.8, students: 4231, free: false, progress: 0, instructor: 'Rohit Verma', instructorRole: '500K+ Creator', description: 'Systematic growth playbook. Tested on 50+ channels across all niches.' },
+  { id: '1', title: 'Thumbnail Psychology Masterclass', category: 'Thumbnail', articles: 12, readTime: '45 min read', rating: 4.9, students: 2341, free: true, progress: 80, instructor: 'Raj Kumar', instructorRole: '1M+ YouTube Creator', description: 'Learn the exact psychology behind high-CTR thumbnails. From color theory to face expressions.' },
+  { id: '2', title: 'Hook Writing for Maximum Retention', category: 'Hook Writing', articles: 8, readTime: '30 min read', rating: 4.8, students: 1876, free: true, progress: 45, instructor: 'Priya Sharma', instructorRole: 'Viral Content Creator', description: 'Master the first 30 seconds. Every video type, every niche.' },
+  { id: '3', title: 'YouTube SEO Deep Dive 2024', category: 'SEO', articles: 15, readTime: '55 min read', rating: 4.7, students: 3102, free: false, progress: 20, instructor: 'Vikram T.', instructorRole: 'YouTube Strategist', description: 'Rank #1 for competitive keywords. Full keyword research to metadata optimization.' },
+  { id: '4', title: 'Storytelling Structure for Creators', category: 'Storytelling', articles: 10, readTime: '40 min read', rating: 4.9, students: 987, free: false, progress: 0, instructor: 'Ananya Roy', instructorRole: 'Filmmaker & Creator', description: 'Hollywood storytelling applied to YouTube. Keep viewers hooked start to finish.' },
+  { id: '5', title: 'Brand Deals 101: From Pitch to Payment', category: 'Monetization', articles: 9, readTime: '35 min read', rating: 4.6, students: 1543, free: false, progress: 0, instructor: 'Sneha Mehta', instructorRole: 'Brand Deal Expert', description: 'Land your first brand deal, negotiate rates, and protect yourself with contracts.' },
+  { id: '6', title: '0 to 100K: Growth Systems That Work', category: 'Growth', articles: 18, readTime: '60 min read', rating: 4.8, students: 4231, free: false, progress: 0, instructor: 'Rohit Verma', instructorRole: '500K+ Creator', description: 'Systematic growth playbook. Tested on 50+ channels across all niches.' },
 ]
 
 function ModuleCard({ m, onClick }) {
@@ -26,7 +26,7 @@ function ModuleCard({ m, onClick }) {
       {/* Thumbnail */}
       <div className="h-40 rounded-xl mb-4 overflow-hidden bg-gradient-to-br from-rachna-lavender to-rachna-indigo/30 flex items-center justify-center relative">
         <div className="w-12 h-12 rounded-2xl bg-white/80 backdrop-blur flex items-center justify-center group-hover:scale-110 transition-transform">
-          {m.free ? <Play size={20} className="text-rachna-indigo" /> : <Lock size={18} className="text-rachna-muted" />}
+          {m.free ? <FileText size={20} className="text-rachna-indigo" /> : <Lock size={18} className="text-rachna-muted" />}
         </div>
         {m.progress > 0 && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
@@ -52,8 +52,8 @@ function ModuleCard({ m, onClick }) {
       <h3 className="font-display font-bold text-rachna-dark text-sm mb-2 line-clamp-2 leading-tight">{m.title}</h3>
 
       <div className="flex items-center gap-3 text-xs text-rachna-muted mb-3">
-        <span className="flex items-center gap-1"><BookOpen size={11} />{m.lessons} lessons</span>
-        <span className="flex items-center gap-1"><Clock size={11} />{m.duration}</span>
+        <span className="flex items-center gap-1"><FileText size={11} />{m.articles} articles</span>
+        <span className="flex items-center gap-1"><Clock size={11} />{m.readTime}</span>
         <span className="flex items-center gap-1"><Star size={11} className="text-amber-400 fill-amber-400" />{m.rating}</span>
       </div>
 
@@ -79,7 +79,7 @@ function ModuleCard({ m, onClick }) {
         </div>
       ) : (
         <button className="w-full text-center text-xs font-semibold text-rachna-indigo bg-rachna-lavender py-2 rounded-xl hover:bg-indigo-100 transition-colors">
-          {m.free ? 'Start Learning →' : '🔒 Upgrade to Access'}
+          {m.free ? 'Start Reading →' : '🔒 Upgrade to Access'}
         </button>
       )}
     </motion.div>
@@ -115,13 +115,13 @@ export default function AcademyPage() {
       {inProgress.length > 0 && (
         <div className="mb-8">
           <h2 className="font-display font-bold text-rachna-dark text-base mb-4 flex items-center gap-2">
-            <Play size={16} className="text-rachna-indigo" /> Continue Learning
+            <FileText size={16} className="text-rachna-indigo" /> Continue Reading
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {inProgress.map(m => (
               <div key={m.id} className="bg-white rounded-2xl border border-rachna-border p-4 flex gap-4 cursor-pointer hover:shadow-card transition-shadow" onClick={() => navigate(`/creator/academy/${m.id}`)}>
                 <div className="w-14 h-14 rounded-xl bg-rachna-lavender flex items-center justify-center flex-shrink-0">
-                  <Play size={20} className="text-rachna-indigo" />
+                  <FileText size={20} className="text-rachna-indigo" />
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-rachna-dark line-clamp-1 mb-1">{m.title}</p>
