@@ -1,42 +1,42 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense, lazy } from 'react'
 
-// Layouts
-import PublicLayout from './layouts/PublicLayout'
-import CreatorLayout from './layouts/CreatorLayout'
+// Auth guards
+import { ProtectedRoute, RoleGuard } from './auth'
 
-// Pages - Public
-import LandingPage from './pages/LandingPage'
-import SignInPage from './pages/auth/SignInPage'
-import SignUpPage from './pages/auth/SignUpPage'
+// Layouts
+import PublicLayout   from './layouts/PublicLayout'
+import CreatorLayout  from './layouts/CreatorLayout'
+
+// Public pages
+import LandingPage    from './pages/LandingPage'
+import SignInPage     from './pages/auth/SignInPage'
+import SignUpPage     from './pages/auth/SignUpPage'
 import OnboardingPage from './pages/auth/OnboardingPage'
 
-// Pages - Creator (lazy loaded)
+// Creator pages (lazy)
 const WorkspaceListPage    = lazy(() => import('./features/workspace/WorkspaceListPage'))
 const WorkspaceProjectPage = lazy(() => import('./features/workspace/WorkspaceProjectPage'))
-const AudienceLabPage = lazy(() => import('./pages/creator/AudienceLabPage'))
+const AudienceLabPage      = lazy(() => import('./pages/creator/AudienceLabPage'))
 const AudienceLabResultPage = lazy(() => import('./pages/creator/AudienceLabResultPage'))
-const FairRatePage = lazy(() => import('./pages/creator/FairRatePage'))
-const ShieldPage = lazy(() => import('./pages/creator/ShieldPage'))
-const ExpertConnectPage = lazy(() => import('./pages/creator/ExpertConnectPage'))
-const MarketplacePage = lazy(() => import('./pages/creator/MarketplacePage'))
-const AcademyPage = lazy(() => import('./pages/creator/AcademyPage'))
-const AcademyLessonPage = lazy(() => import('./pages/creator/AcademyLessonPage'))
-const AnalyticsPage = lazy(() => import('./pages/creator/AnalyticsPage'))
-const SettingsPage = lazy(() => import('./pages/creator/SettingsPage'))
+const FairRatePage         = lazy(() => import('./pages/creator/FairRatePage'))
+const ShieldPage           = lazy(() => import('./pages/creator/ShieldPage'))
+const ExpertConnectPage    = lazy(() => import('./pages/creator/ExpertConnectPage'))
+const MarketplacePage      = lazy(() => import('./pages/creator/MarketplacePage'))
+const AcademyPage          = lazy(() => import('./pages/creator/AcademyPage'))
+const AcademyLessonPage    = lazy(() => import('./pages/creator/AcademyLessonPage'))
+const AnalyticsPage        = lazy(() => import('./pages/creator/AnalyticsPage'))
+const SettingsPage         = lazy(() => import('./pages/creator/SettingsPage'))
 
-// Pages - Other roles
-const FreelancerDashboard = lazy(() => import('./pages/freelancer/FreelancerDashboard'))
-const ExpertDashboard = lazy(() => import('./pages/expert/ExpertDashboard'))
-const ManagerDashboard = lazy(() => import('./pages/manager/ManagerDashboard'))
+// Other role dashboards (lazy)
+const FreelancerDashboard  = lazy(() => import('./pages/freelancer/FreelancerDashboard'))
+const ExpertDashboard      = lazy(() => import('./pages/expert/ExpertDashboard'))
+const ManagerDashboard     = lazy(() => import('./pages/manager/ManagerDashboard'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5,
-      retry: 1,
-    },
+    queries: { staleTime: 1000 * 60 * 5, retry: 1 },
   },
 })
 
@@ -54,50 +54,95 @@ const LoadingFallback = () => (
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<PublicLayout />}>
-              <Route index element={<LandingPage />} />
-            </Route>
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
 
-            {/* Auth routes */}
-            <Route path="/sign-in" element={<SignInPage />} />
-            <Route path="/sign-up" element={<SignUpPage />} />
-            <Route path="/onboarding" element={<OnboardingPage />} />
+          {/* ── PUBLIC ───────────────────────────────── */}
+          <Route path="/" element={<PublicLayout />}>
+            <Route index element={<LandingPage />} />
+          </Route>
 
-            {/* Creator routes */}
-            <Route path="/creator" element={<CreatorLayout />}>
-              <Route index element={<Navigate to="/creator/workspace" replace />} />
-              <Route path="workspace" element={<WorkspaceListPage />} />
-              <Route path="workspace/:id" element={<WorkspaceProjectPage />} />
-              <Route path="audience-lab" element={<AudienceLabPage />} />
-              <Route path="audience-lab/:testId" element={<AudienceLabResultPage />} />
-              <Route path="fair-rate" element={<FairRatePage />} />
-              <Route path="shield" element={<ShieldPage />} />
-              <Route path="expert-connect" element={<ExpertConnectPage />} />
-              <Route path="marketplace" element={<MarketplacePage />} />
-              <Route path="academy" element={<AcademyPage />} />
-              <Route path="academy/:moduleId" element={<AcademyLessonPage />} />
-              <Route path="analytics" element={<AnalyticsPage />} />
-              <Route path="settings" element={<SettingsPage />} />
-            </Route>
+          {/* ── AUTH (Clerk handles these) ────────────── */}
+          <Route path="/sign-in/*" element={<SignInPage />} />
+          <Route path="/sign-up/*" element={<SignUpPage />} />
 
-            {/* Freelancer routes */}
-            <Route path="/freelancer/*" element={<FreelancerDashboard />} />
+          {/* ── ONBOARDING (must be logged in) ────────── */}
+          <Route
+            path="/onboarding"
+            element={
+              <ProtectedRoute>
+                <OnboardingPage />
+              </ProtectedRoute>
+            }
+          />
 
-            {/* Expert routes */}
-            <Route path="/expert/*" element={<ExpertDashboard />} />
+          {/* ── CREATOR ROUTES ────────────────────────── */}
+          <Route
+            path="/creator"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowed={['creator']}>
+                  <CreatorLayout />
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Navigate to="/creator/workspace" replace />} />
+            <Route path="workspace"               element={<WorkspaceListPage />} />
+            <Route path="workspace/:id"           element={<WorkspaceProjectPage />} />
+            <Route path="audience-lab"            element={<AudienceLabPage />} />
+            <Route path="audience-lab/:testId"    element={<AudienceLabResultPage />} />
+            <Route path="fair-rate"               element={<FairRatePage />} />
+            <Route path="shield"                  element={<ShieldPage />} />
+            <Route path="expert-connect"          element={<ExpertConnectPage />} />
+            <Route path="marketplace"             element={<MarketplacePage />} />
+            <Route path="academy"                 element={<AcademyPage />} />
+            <Route path="academy/:moduleId"       element={<AcademyLessonPage />} />
+            <Route path="analytics"               element={<AnalyticsPage />} />
+            <Route path="settings"                element={<SettingsPage />} />
+          </Route>
 
-            {/* Manager routes */}
-            <Route path="/manager/*" element={<ManagerDashboard />} />
+          {/* ── FREELANCER ROUTES ─────────────────────── */}
+          <Route
+            path="/freelancer/*"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowed={['freelancer']}>
+                  <FreelancerDashboard />
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
 
-            {/* Catch all */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
+          {/* ── EXPERT ROUTES ─────────────────────────── */}
+          <Route
+            path="/expert/*"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowed={['expert']}>
+                  <ExpertDashboard />
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ── MANAGER ROUTES ────────────────────────── */}
+          <Route
+            path="/manager/*"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowed={['manager']}>
+                  <ManagerDashboard />
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ── CATCH ALL ─────────────────────────────── */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+
+        </Routes>
+      </Suspense>
     </QueryClientProvider>
   )
 }
