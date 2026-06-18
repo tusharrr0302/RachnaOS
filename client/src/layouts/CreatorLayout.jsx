@@ -4,9 +4,9 @@ import {
   Home, Layers, FlaskConical, DollarSign, ShieldCheck,
   Users, ShoppingBag, BookOpen, BarChart3, Settings,
   Plus, ChevronLeft, Bell, HelpCircle, Zap, ChevronDown,
-  FileText, Tag, Users2, Bot, GraduationCap
+  FileText, Tag, Users2, Bot, GraduationCap, LogOut
 } from 'lucide-react'
-import { UserButton } from '@clerk/clerk-react'
+import { UserButton, useClerk } from '@clerk/clerk-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { useAuth } from '../auth'
@@ -32,6 +32,7 @@ export default function CreatorLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const { clerkUser, profile } = useAuth()
+  const { signOut } = useClerk()
 
   // Canvas routes need overflow-hidden so React Flow fills full height
   const isCanvasRoute = /^\/creator\/workspace\/.+/.test(location.pathname)
@@ -151,7 +152,10 @@ export default function CreatorLayout() {
           'border-t border-rachna-border px-3 py-4 flex items-center gap-3',
           collapsed && 'justify-center'
         )}>
-          <UserButton afterSignOutUrl="/sign-in" />
+          <UserButton
+            afterSignOutUrl="/sign-in"
+            appearance={{ elements: { avatarBox: { width: 32, height: 32 } } }}
+          />
           <AnimatePresence>
             {!collapsed && (
               <motion.div
@@ -194,6 +198,15 @@ export default function CreatorLayout() {
             <button className="w-9 h-9 rounded-xl hover:bg-rachna-surface flex items-center justify-center transition-colors relative">
               <Bell size={18} className="text-rachna-muted" />
               <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rachna-danger rounded-full" />
+            </button>
+            <div className="w-px h-5 bg-rachna-border mx-1" />
+            <button
+              id="creator-signout"
+              onClick={() => signOut(() => navigate('/sign-in'))}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-rachna-muted hover:text-rachna-danger hover:bg-red-50 transition-colors"
+            >
+              <LogOut size={14} />
+              Sign out
             </button>
           </div>
         </header>
