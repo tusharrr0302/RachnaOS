@@ -19,7 +19,7 @@ import AuthRedirectPage from './pages/auth/AuthRedirectPage'
 // Creator pages (lazy)
 const WorkspaceListPage    = lazy(() => import('./features/workspace/WorkspaceListPage'))
 const WorkspaceProjectPage = lazy(() => import('./features/workspace/WorkspaceProjectPage'))
-const AudienceLabPage      = lazy(() => import('./pages/creator/AudienceLabPage'))
+const AudienceLabPage      = lazy(() => import('./features/03-audiencelab/AudienceLabPage'))
 const AudienceLabResultPage = lazy(() => import('./pages/creator/AudienceLabResultPage'))
 const FairRatePage         = lazy(() => import('./pages/creator/FairRatePage'))
 const ShieldPage           = lazy(() => import('./pages/creator/ShieldPage'))

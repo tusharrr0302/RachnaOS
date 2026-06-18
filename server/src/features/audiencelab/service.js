@@ -1,13 +1,12 @@
 // server/src/features/audiencelab/service.js
 // All Claude claude-sonnet-4-6 AI calls for AudienceLab + MomentumOS
 
-const axios = require('axios')
+const { OpenAI } = require('openai')
 
-const ANTHROPIC_HEADERS = {
-  'Content-Type':      'application/json',
-  'anthropic-version': '2023-06-01',
-  'x-api-key':         process.env.ANTHROPIC_API_KEY,
-}
+const openai = new OpenAI({
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: 'https://api.groq.com/openai/v1',
+})
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AUDIENCE LAB — Deep Channel Analysis
@@ -15,12 +14,13 @@ const ANTHROPIC_HEADERS = {
 exports.runAudienceLabAnalysis = async (channelData) => {
   const prompt = buildAudienceLabPrompt(channelData)
 
-  const res = await axios.post(
-    'https://api.anthropic.com/v1/messages',
-    {
-      model:      'claude-sonnet-4-6',
-      max_tokens: 4096,
-      system: `You are RachnaOS's AudienceLab AI — an expert YouTube channel analyst with deep knowledge of content strategy, audience psychology, thumbnail science, and growth mechanics for Indian and global YouTube creators.
+  const completion = await openai.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
+    response_format: { type: 'json_object' },
+    messages: [
+      {
+        role: 'system',
+        content: `You are RachnaOS's AudienceLab AI — an expert YouTube channel analyst with deep knowledge of content strategy, audience psychology, thumbnail science, and growth mechanics for Indian and global YouTube creators.
 
 Your job is to analyze YouTube channel data and produce a brutally honest, deeply insightful, actionable analysis. Never give generic advice. Every insight must reference specific data points from the channel.
 
@@ -82,13 +82,16 @@ Always respond with a valid JSON object exactly matching this structure — no m
     "estimatedCPM": "<range in INR>",
     "sponsorshipRate": "<estimated rate per integration in INR>"
   }
-}`,
-      messages: [{ role: 'user', content: prompt }],
-    },
-    { headers: ANTHROPIC_HEADERS }
-  )
+}`
+      },
+      {
+        role: 'user',
+        content: prompt
+      }
+    ]
+  })
 
-  const text = res.data.content[0].text
+  const text = completion.choices[0].message.content
   try {
     return JSON.parse(text)
   } catch {
@@ -107,12 +110,13 @@ exports.runMomentumAnalysis = async (channelData, benchmarks) => {
       ).join('\n')
     : 'No exact benchmark matches found. Use general industry knowledge for creators at this subscriber tier.'
 
-  const res = await axios.post(
-    'https://api.anthropic.com/v1/messages',
-    {
-      model:      'claude-sonnet-4-6',
-      max_tokens: 2048,
-      system: `You are RachnaOS's MomentumOS engine. You compare creators with others who were at similar subscriber counts and stats, and tell them how they're doing relative to that benchmark — with specific named creators when possible (e.g., "When CarryMinati had 50K subs, his avg views were...").
+  const completion = await openai.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
+    response_format: { type: 'json_object' },
+    messages: [
+      {
+        role: 'system',
+        content: `You are RachnaOS's MomentumOS engine. You compare creators with others who were at similar subscriber counts and stats, and tell them how they're doing relative to that benchmark — with specific named creators when possible (e.g., "When CarryMinati had 50K subs, his avg views were...").
 
 Be motivating but honest. Reference real creators from India and globally.
 
@@ -154,8 +158,9 @@ Respond ONLY with valid JSON matching this exact structure:
     "advice": "<specific advice to avoid burnout>"
   },
   "weeklyFocusAreas": ["<focus1>", "<focus2>", "<focus3>"]
-}`,
-      messages: [{
+}`
+      },
+      {
         role: 'user',
         content: `Analyze this creator's MomentumOS comparison:
 
@@ -172,13 +177,12 @@ CREATOR STATS:
 BENCHMARK CREATORS AT SIMILAR STAGE:
 ${benchmarkSummary}
 
-Generate the MomentumOS comparison report.`,
-      }],
-    },
-    { headers: ANTHROPIC_HEADERS }
-  )
+Generate the MomentumOS comparison report.`
+      }
+    ]
+  })
 
-  const text = res.data.content[0].text
+  const text = completion.choices[0].message.content
   try {
     return JSON.parse(text)
   } catch {
