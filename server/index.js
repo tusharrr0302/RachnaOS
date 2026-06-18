@@ -5,8 +5,11 @@ const express     = require('express')
 const cors        = require('cors')
 const rateLimit   = require('express-rate-limit')
 
-const authRouter        = require('./src/features/auth/auth.router')
-const audienceLabRouter = require('./src/features/audiencelab/router')
+const authRouter             = require('./src/features/auth/auth.router')
+const audienceLabRouter      = require('./src/features/audiencelab/router')
+const freelancerRouter       = require('./src/features/freelancer/freelancer.router')
+const publicProfileRouter    = require('./src/features/freelancer/public-profile.router')
+const marketplaceRouter      = require('./src/features/marketplace/marketplace.router')
 
 const app  = express()
 const PORT = process.env.PORT || 5000
@@ -42,6 +45,9 @@ app.get('/health', (req, res) => res.json({ status: 'ok', env: process.env.NODE_
 // ── Routes ───────────────────────────────────────────────────────────
 app.use('/api/auth',        authRouter)
 app.use('/api/audiencelab', audienceLabRouter)
+app.use('/api/freelancer',  freelancerRouter)
+app.use('/api/freelancer',  publicProfileRouter)
+app.use('/api/marketplace', marketplaceRouter)
 
 // Example of a protected, role-gated route:
 // const { authenticate, attachRole } = require('./src/middleware/authenticate')

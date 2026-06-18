@@ -6,8 +6,9 @@ import { Suspense, lazy } from 'react'
 import { ProtectedRoute, RoleGuard } from './auth'
 
 // Layouts
-import PublicLayout   from './layouts/PublicLayout'
-import CreatorLayout  from './layouts/CreatorLayout'
+import PublicLayout        from './layouts/PublicLayout'
+import CreatorLayout       from './layouts/CreatorLayout'
+import FreelancerLayout    from './layouts/FreelancerLayout'
 
 // Public pages
 import LandingPage    from './pages/LandingPage'
@@ -30,8 +31,22 @@ const AcademyLessonPage    = lazy(() => import('./pages/creator/AcademyLessonPag
 const AnalyticsPage        = lazy(() => import('./pages/creator/AnalyticsPage'))
 const SettingsPage         = lazy(() => import('./pages/creator/SettingsPage'))
 
+// Freelancer pages (lazy)
+const FreelancerDashboard       = lazy(() => import('./pages/freelancer/FreelancerDashboard'))
+const FreelancerProjectsPage    = lazy(() => import('./pages/freelancer/FreelancerProjectsPage'))
+const FreelancerProposalsPage   = lazy(() => import('./pages/freelancer/FreelancerProposalsPage'))
+const FreelancerTasksPage       = lazy(() => import('./pages/freelancer/FreelancerTasksPage'))
+const FreelancerEarningsPage    = lazy(() => import('./pages/freelancer/FreelancerEarningsPage'))
+const FreelancerTimeTrackingPage = lazy(() => import('./pages/freelancer/FreelancerTimeTrackingPage'))
+const FreelancerMessagesPage    = lazy(() => import('./pages/freelancer/FreelancerMessagesPage'))
+const FreelancerReviewsPage     = lazy(() => import('./pages/freelancer/FreelancerReviewsPage'))
+const FreelancerPortfolioPage   = lazy(() => import('./pages/freelancer/FreelancerPortfolioPage'))
+const FreelancerResourcesPage   = lazy(() => import('./pages/freelancer/FreelancerResourcesPage'))
+const FreelancerProfilePage     = lazy(() => import('./pages/freelancer/FreelancerProfilePage'))
+const FreelancerMarketplacePage = lazy(() => import('./pages/freelancer/MarketplacePage'))
+const FreelancerPublicProfilePage = lazy(() => import('./pages/freelancer/FreelancerPublicProfilePage'))
+
 // Other role dashboards (lazy)
-const FreelancerDashboard  = lazy(() => import('./pages/freelancer/FreelancerDashboard'))
 const ExpertDashboard      = lazy(() => import('./pages/expert/ExpertDashboard'))
 const ManagerDashboard     = lazy(() => import('./pages/manager/ManagerDashboard'))
 
@@ -106,17 +121,32 @@ export default function App() {
             <Route path="settings"                element={<SettingsPage />} />
           </Route>
 
-          {/* ── FREELANCER ROUTES ─────────────────────── */}
+          {/* ── FREELANCER ROUTES ─────────────────────────── */}
           <Route
-            path="/freelancer/*"
+            path="/freelancer"
             element={
               <ProtectedRoute>
                 <RoleGuard allowed={['freelancer']}>
-                  <FreelancerDashboard />
+                  <FreelancerLayout />
                 </RoleGuard>
               </ProtectedRoute>
             }
-          />
+          >
+            <Route index element={<Navigate to="/freelancer/dashboard" replace />} />
+            <Route path="dashboard"     element={<FreelancerDashboard />} />
+            <Route path="projects"      element={<FreelancerProjectsPage />} />
+            <Route path="proposals"     element={<FreelancerProposalsPage />} />
+            <Route path="tasks"         element={<FreelancerTasksPage />} />
+            <Route path="earnings"      element={<FreelancerEarningsPage />} />
+            <Route path="time-tracking" element={<FreelancerTimeTrackingPage />} />
+            <Route path="messages"      element={<FreelancerMessagesPage />} />
+            <Route path="reviews"       element={<FreelancerReviewsPage />} />
+            <Route path="portfolio"     element={<FreelancerPortfolioPage />} />
+            <Route path="resources"     element={<FreelancerResourcesPage />} />
+            <Route path="profile"        element={<FreelancerProfilePage />} />
+            <Route path="marketplace"    element={<FreelancerMarketplacePage />} />
+            <Route path="public-profile" element={<FreelancerPublicProfilePage />} />
+          </Route>
 
           {/* ── EXPERT ROUTES ─────────────────────────── */}
           <Route
