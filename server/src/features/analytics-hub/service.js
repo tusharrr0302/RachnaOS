@@ -8,13 +8,35 @@ const openai = new OpenAI({
   baseURL: 'https://api.groq.com/openai/v1',
 })
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function createChatCompletionWithRetry(client, params, retries = 5, initialDelay = 1000) {
+  let delay = initialDelay;
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await client.chat.completions.create(params);
+    } catch (err) {
+      const isRateLimit = err.status === 429 || 
+                          (err.message && err.message.includes("429")) || 
+                          (err.message && err.message.toLowerCase().includes("rate limit"));
+      if (isRateLimit && i < retries - 1) {
+        console.warn(`Groq rate limit hit. Retrying in ${delay}ms... (Attempt ${i + 1}/${retries})`);
+        await sleep(delay);
+        delay *= 1.5; // exponential backoff
+        continue;
+      }
+      throw err;
+    }
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // AUDIENCE LAB — Deep Channel Analysis
 // ─────────────────────────────────────────────────────────────────────────────
 exports.runAudienceLabAnalysis = async (channelData) => {
   const prompt = buildAudienceLabPrompt(channelData)
 
-  const completion = await openai.chat.completions.create({
+  const completion = await createChatCompletionWithRetry(openai, {
     model: 'llama-3.3-70b-versatile',
     response_format: { type: 'json_object' },
     messages: [
@@ -110,7 +132,7 @@ exports.runMomentumAnalysis = async (channelData, benchmarks) => {
       ).join('\n')
     : 'No exact benchmark matches found. Use general industry knowledge for creators at this subscriber tier.'
 
-  const completion = await openai.chat.completions.create({
+  const completion = await createChatCompletionWithRetry(openai, {
     model: 'llama-3.3-70b-versatile',
     response_format: { type: 'json_object' },
     messages: [
@@ -228,7 +250,7 @@ Provide the complete AudienceLab analysis JSON.`
 // VIDEO DEEP DIVE — Single Video Analysis
 // ─────────────────────────────────────────────────────────────────────────────
 exports.runVideoDeepDiveAnalysis = async (video, channelAverages) => {
-  const completion = await openai.chat.completions.create({
+  const completion = await createChatCompletionWithRetry(openai, {
     model: 'llama-3.1-8b-instant', // Using the extremely fast 8B model instead of 70B for instant UI response
     response_format: { type: 'json_object' },
     messages: [

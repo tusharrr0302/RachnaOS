@@ -7,6 +7,28 @@ const groq = new OpenAI({
   baseURL: "https://api.groq.com/openai/v1",
 });
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function createChatCompletionWithRetry(client, params, retries = 5, initialDelay = 1000) {
+  let delay = initialDelay;
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await client.chat.completions.create(params);
+    } catch (err) {
+      const isRateLimit = err.status === 429 || 
+                          (err.message && err.message.includes("429")) || 
+                          (err.message && err.message.toLowerCase().includes("rate limit"));
+      if (isRateLimit && i < retries - 1) {
+        console.warn(`Groq rate limit hit. Retrying in ${delay}ms... (Attempt ${i + 1}/${retries})`);
+        await sleep(delay);
+        delay *= 1.5; // exponential backoff
+        continue;
+      }
+      throw err;
+    }
+  }
+}
+
 const synthesisSystemPrompt = `You are a senior Indian YouTube content strategist synthesizing focus-group data into one clear, actionable report.
         
 You MUST respond with a valid JSON object matching exactly this schema:
@@ -77,8 +99,12 @@ exports.runFocusGroupSimulation = async (input) => {
 
   // Step 1: All 6 persona agents run IN PARALLEL on GROQ
   const personaResults = await Promise.all(
-    PERSONA_AGENTS.map(async (persona) => {
+    PERSONA_AGENTS.map(async (persona, idx) => {
       try {
+        // Stagger calls slightly to avoid hitting concurrent rate limits
+        if (idx > 0) {
+          await sleep(idx * 200);
+        }
         const hasImage = !!input.thumbnailBase64;
         // Groq vision model for thumbnails, versatile for text-only
         const model = hasImage ? "llama-3.2-90b-vision-preview" : "llama-3.1-8b-instant";
@@ -99,7 +125,7 @@ You MUST respond with a valid JSON object using the exact following schema:
   "recommendedSkills": ["string"] (Array of marketplace skills needed for this suggestion, e.g., "Thumbnail Design", "Scriptwriting". Empty if none)
 }`;
 
-        const response = await groq.chat.completions.create({
+        const response = await createChatCompletionWithRetry(groq, {
           model: model,
           messages: [
             { role: "system", content: systemInstruction },
@@ -114,12 +140,12 @@ You MUST respond with a valid JSON object using the exact following schema:
         return { ...persona, ...reaction };
       } catch (err) {
         console.error(`Persona ${persona.id} failed on Groq:`, err.message);
-        return { ...persona, error: true, reaction: "This agent failed to respond." };
+        return { ...persona, error: true, reaction: "This agent failed to respond due to capacity limitations. Please try again." };
       }
     })
   );
 
-  // Step 2: Synthesis agent reads all 6 reactions and produces one unified report using GPT-4o
+  // Step 2: Synthesis agent reads all 6 reactions and produces one unified report
   const synthesisPrompt = `You are RachnaOS's MASTER SYNTHESIS AGENT for AudienceLab.
 You receive 6 independent persona reactions to the same video concept and must produce ONE unified focus-group report.
 
@@ -136,7 +162,7 @@ Script Outline: ${input.scriptOutline || "Not provided"}
 
 Produce the synthesized JSON report.`;
 
-  const synthesisResponse = await groq.chat.completions.create({
+  const synthesisResponse = await createChatCompletionWithRetry(groq, {
     model: "llama-3.1-8b-instant",
     messages: [
       { role: "system", content: synthesisSystemPrompt },
