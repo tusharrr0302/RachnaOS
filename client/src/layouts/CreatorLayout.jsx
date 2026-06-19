@@ -19,10 +19,8 @@ const NAV_ITEMS = [
   { icon: ShieldCheck,   label: 'CreatorShield',   path: '/creator/shield' },
   { icon: Users,         label: 'Expert Connect',  path: '/creator/expert-connect' },
   { icon: ShoppingBag,   label: 'Marketplace',     path: '/creator/marketplace' },
-  { icon: GraduationCap, label: 'Academy',          path: '/creator/academy' },
-  { icon: FileText,      label: 'Documentation',   path: '/creator/docs' },
+  { icon: FileText,      label: 'Documentation',    path: '/creator/academy' },
   { icon: Tag,           label: 'Sponsorship Hub', path: '/creator/sponsorship' },
-  { icon: Users2,        label: 'Team',            path: '/creator/team' },
   { icon: BarChart3,     label: 'Analytics',       path: '/creator/analytics' },
   { icon: Bot,           label: 'AI Assistant',    path: '/creator/ai' },
 ]

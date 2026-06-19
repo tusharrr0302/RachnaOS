@@ -106,7 +106,7 @@ export default function AcademyPage() {
           <div className="w-8 h-8 rounded-xl bg-rachna-lavender flex items-center justify-center">
             <BookOpen size={16} className="text-rachna-indigo" />
           </div>
-          <h1 className="font-display font-bold text-rachna-dark text-2xl">Creator Academy</h1>
+          <h1 className="font-display font-bold text-rachna-dark text-2xl">Documentation</h1>
         </div>
         <p className="text-rachna-muted text-sm">Real knowledge. No fluff. Learn from creators who built 7-figure channels.</p>
       </div>

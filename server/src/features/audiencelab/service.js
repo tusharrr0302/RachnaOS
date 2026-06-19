@@ -116,15 +116,18 @@ exports.runMomentumAnalysis = async (channelData, benchmarks) => {
     messages: [
       {
         role: 'system',
-        content: `You are RachnaOS's MomentumOS engine. You compare creators with others who were at similar subscriber counts and stats, and tell them how they're doing relative to that benchmark — with specific named creators when possible (e.g., "When CarryMinati had 50K subs, his avg views were...").
+        content: `You are RachnaOS's MomentumOS engine — an AI growth advisor that analyzes YouTube creators with surgical precision. You compare creators to others at similar stages, explain performance deeply, predict growth with evidence-based confidence, and recommend the single highest-impact action.
 
-Be motivating but honest. Reference real creators from India and globally.
+Be a growth coach, not a statistics dashboard. Every insight must feel specific to this creator's actual data. Reference real Indian and global creators when comparing.
 
 Respond ONLY with valid JSON matching this exact structure:
 {
   "momentumScore": <0-100>,
   "momentumLabel": "Rocket|Accelerating|Steady|Slowing|Stalled",
-  "overallVerdict": "<2 sentence honest verdict>",
+  "overallVerdict": "<2 sentence honest, specific verdict referencing their actual stats>",
+  "scoreReasons": [
+    { "signal": "positive|negative|neutral", "insight": "<specific explainer referencing their data>", "impact": "High|Medium|Low" }
+  ],
   "comparedCreators": [
     {
       "creatorName": "<real creator name>",
@@ -146,8 +149,21 @@ Respond ONLY with valid JSON matching this exact structure:
     "summary": "<honest comparison summary>"
   },
   "growthPrediction": {
-    "at6Months": { "subscribers": "<estimated range>", "condition": "<if they follow this advice>" },
-    "at12Months": { "subscribers": "<estimated range>", "condition": "<if they follow this advice>" }
+    "at6Months": {
+      "subscribers": "<estimated range e.g. 45,000 - 70,000>",
+      "confidencePercent": <50-90>,
+      "basedOn": ["<factor1 referencing their data>", "<factor2>", "<factor3>"]
+    },
+    "at12Months": {
+      "subscribers": "<estimated range>",
+      "confidencePercent": <40-80>,
+      "basedOn": ["<factor1>", "<factor2>", "<factor3>"]
+    }
+  },
+  "nextBestAction": {
+    "priority": "High|Medium|Opportunity",
+    "recommendation": "<one highly specific, personalized action referencing their top video, posting frequency, engagement, or topic — not generic advice>",
+    "potentialImpact": ["<impact1 e.g. Increase average views by 20-35%>", "<impact2>", "<impact3>"]
   },
   "momentumSignals": [
     { "signal": "positive|negative|neutral", "insight": "<specific insight>" }
