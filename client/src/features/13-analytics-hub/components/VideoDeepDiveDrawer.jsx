@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { Clock, Sparkles, ThumbsUp, Eye, Type, Target } from "lucide-react";
+import { Clock, Sparkles, ThumbsUp, Eye, Type, Target, Users } from "lucide-react";
 import { useVideoAnalysis } from "../hooks/useVideoAnalysis";
+import FreelancerRecommendation from "./FreelancerRecommendation";
 
 export default function VideoDeepDiveDrawer({ video, retentionCurve, trafficSources, isConnected, onClose, onConnect, channelData }) {
   const { loading: aiLoading, analysis, analyzeVideo, setAnalysis } = useVideoAnalysis();
@@ -121,6 +122,21 @@ export default function VideoDeepDiveDrawer({ video, retentionCurve, trafficSour
                   <p className="text-sm text-[#0E0E1A] leading-relaxed">{analysis.audienceSentiment.engagementBreakdown}</p>
                 </div>
 
+                {/* What Would Top Creator Do? */}
+                {analysis.topCreatorPerspective && (
+                  <div className="bg-gradient-to-br from-[#4540C8] to-[#9B7FD8] rounded-xl p-5 border border-[#4540C8]/20 shadow-md text-white">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Target size={18} className="text-yellow-300" />
+                      <p className="text-sm font-bold uppercase tracking-wide">
+                        What Would {analysis.topCreatorPerspective.creatorName} Do?
+                      </p>
+                    </div>
+                    <p className="text-sm leading-relaxed text-white/95">
+                      {analysis.topCreatorPerspective.whatTheyWouldDo}
+                    </p>
+                  </div>
+                )}
+
                 {/* What to Repeat */}
                 {analysis.replicableElements?.length > 0 && (
                   <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
@@ -136,6 +152,38 @@ export default function VideoDeepDiveDrawer({ video, retentionCurve, trafficSour
                         </li>
                       ))}
                     </ul>
+                  </div>
+                )}
+
+                {/* Audience Persona Reactions */}
+                {analysis.personaReactions?.length > 0 && (
+                  <div className="mt-8">
+                    <h3 className="font-bold text-[#0E0E1A] mb-4 flex items-center gap-2">
+                      <Users size={18} className="text-[#4540C8]" />
+                      Audience Persona Breakdown
+                    </h3>
+                    <div className="space-y-4">
+                      {analysis.personaReactions.map((p, i) => (
+                        <div key={i} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                          <div className="bg-gray-50 px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                            <span className="font-bold text-[#0E0E1A] text-sm">{p.personaName}</span>
+                          </div>
+                          <div className="p-4 space-y-4">
+                            <div>
+                              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1">Reaction</p>
+                              <p className="text-sm text-gray-700 leading-relaxed">{p.reaction}</p>
+                            </div>
+                            <div className="bg-[#F8F7FF] rounded-lg p-3 border border-[#4540C8]/10">
+                              <p className="text-[11px] font-bold text-[#4540C8] uppercase tracking-wide mb-1">Suggestion for Next Time</p>
+                              <p className="text-sm text-[#0E0E1A] leading-relaxed">{p.suggestion}</p>
+                              {p.recommendedSkills && p.recommendedSkills.length > 0 && (
+                                <FreelancerRecommendation skills={p.recommendedSkills} />
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>

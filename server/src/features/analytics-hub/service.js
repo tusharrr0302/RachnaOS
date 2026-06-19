@@ -244,6 +244,18 @@ Always respond with a valid JSON object exactly matching this structure:
     "psychologicalTriggers": ["<trigger 1>", "<trigger 2>"],
     "ctrPotential": "High|Medium|Low"
   },
+  "personaReactions": [
+    {
+      "personaName": "<name of viewer segment>",
+      "reaction": "<how they likely felt about the video>",
+      "suggestion": "<detailed suggestion on how to make the video better for them>",
+      "recommendedSkills": ["<Skill 1>", "<Skill 2>"] 
+    }
+  ],
+  "topCreatorPerspective": {
+    "creatorName": "<name of the biggest creator in this niche>",
+    "whatTheyWouldDo": "<detailed breakdown of exactly how they would have executed this video differently to maximize views>"
+  },
   "audienceSentiment": {
     "estimatedSentiment": "Positive|Neutral|Mixed",
     "engagementBreakdown": "<explanation of comment/like ratios relative to views>"
@@ -253,7 +265,9 @@ Always respond with a valid JSON object exactly matching this structure:
     "effectiveness": "<guess on how effective it was>"
   },
   "replicableElements": ["<what to repeat 1>", "<what to repeat 2>"]
-}`
+}
+
+For recommendedSkills, use standard freelancer marketplace skills like: "Thumbnail Design", "Video Editing", "Scriptwriting", "Motion Graphics", "Color Grading", "Voiceover". Keep the array empty if no specific skills are needed.`
       },
       {
         role: 'user',

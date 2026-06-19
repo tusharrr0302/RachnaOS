@@ -89,6 +89,28 @@ router.get('/profile-presets', (req, res) => {
 })
 
 // ─────────────────────────────────────────────────────────────────────
+// GET /api/freelancer/search
+// Search freelancers by skills
+// ─────────────────────────────────────────────────────────────────────
+router.get('/search', (req, res) => {
+  const { skills } = req.query
+  const skillList = skills ? skills.split(',').map(s => s.trim().toLowerCase()) : []
+
+  const freelancers = Object.values(MOCK_PROFILES)
+  let matched = freelancers
+
+  if (skillList.length > 0) {
+    matched = freelancers.filter(f => {
+      // Check if any of the freelancer's specializations match the requested skills
+      const fSkills = (f.specializations || []).map(s => s.toLowerCase())
+      return skillList.some(skill => fSkills.some(fs => fs.includes(skill)))
+    })
+  }
+
+  res.json({ data: matched })
+})
+
+// ─────────────────────────────────────────────────────────────────────
 // GET /api/freelancer/public-profile/:username
 // Public — used by creators browsing the marketplace
 // ─────────────────────────────────────────────────────────────────────
