@@ -42,33 +42,31 @@ export default function FreelancerRecommendation({ skills = [] }) {
   const f = freelancers[0]; // Show the top matched freelancer
 
   return (
-    <div className="mt-4 bg-gradient-to-r from-[#4540C8]/5 to-[#9B7FD8]/5 border border-[#4540C8]/20 rounded-xl p-4">
-      <div className="flex items-center gap-2 mb-3">
-        <Sparkles size={14} className="text-[#4540C8]" />
-        <span className="text-xs font-bold text-[#4540C8] uppercase tracking-wide">Marketplace Match</span>
-        <span className="text-xs text-gray-500 hidden md:inline">— Hire a Pro to execute this</span>
+    <div className="mt-3 bg-white rounded-lg border border-[#4540C8]/20 shadow-sm overflow-hidden">
+      <div className="bg-[#4540C8]/5 px-3 py-2 border-b border-[#4540C8]/10 flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <Sparkles size={12} className="text-[#4540C8]" />
+          <span className="text-[10px] font-bold text-[#4540C8] uppercase tracking-wide">Marketplace Match</span>
+        </div>
+        <span className="text-[10px] text-[#4540C8]/70 hidden sm:inline">Hire a Pro to execute this</span>
       </div>
 
-      <div className="flex items-center gap-4 bg-white p-3 rounded-lg shadow-sm border border-gray-100 transition-all hover:shadow-md">
+      <div className="flex items-center gap-3 p-3 transition-colors hover:bg-gray-50 group cursor-pointer">
         {f.avatar ? (
-          <img src={f.avatar} alt={f.name} className="w-12 h-12 rounded-full object-cover" />
+          <img src={f.avatar} alt={f.name} className="w-10 h-10 rounded-full object-cover shadow-sm" />
         ) : (
-          <div className="w-12 h-12 rounded-full bg-[#4540C8]/10 flex items-center justify-center flex-shrink-0 text-lg font-bold text-[#4540C8]">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#4540C8] to-[#9B7FD8] flex items-center justify-center flex-shrink-0 text-white font-bold shadow-sm">
             {f.name[0]}
           </div>
         )}
         
         <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-[#0E0E1A] truncate">{f.name}</h4>
-          <p className="text-xs text-gray-500 truncate">{f.role_title}</p>
-          <div className="flex items-center gap-3 mt-1 text-[11px] text-gray-500">
-            <span className="flex items-center gap-1"><Star size={10} className="text-yellow-400 fill-current" /> {f.stats?.avg_rating || '5.0'}</span>
-            <span>{f.stats?.projects_completed || '10+'} projects</span>
-          </div>
+          <h4 className="font-bold text-[#0E0E1A] text-sm truncate">{f.name}</h4>
+          <p className="text-[11px] text-gray-500 truncate mt-0.5">{f.role_title}</p>
         </div>
 
-        <Link to={`/marketplace/profile/${f.username}`} className="flex items-center justify-center w-8 h-8 rounded-full bg-[#F8F7FF] text-[#4540C8] hover:bg-[#4540C8] hover:text-white transition-colors">
-          <ChevronRight size={16} />
+        <Link to={`/marketplace/profile/${f.username}`} className="flex items-center justify-center w-7 h-7 rounded-full bg-[#F8F7FF] text-[#4540C8] group-hover:bg-[#4540C8] group-hover:text-white transition-colors border border-[#4540C8]/20 group-hover:border-transparent">
+          <ChevronRight size={14} />
         </Link>
       </div>
     </div>

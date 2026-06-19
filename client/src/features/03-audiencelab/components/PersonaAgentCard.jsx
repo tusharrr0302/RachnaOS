@@ -37,17 +37,19 @@ export default function PersonaAgentCard({ persona }) {
       </div>
 
       {persona.languageOrCulturalNote && (
-        <div className="mb-3 bg-[#F8F7FF] rounded-lg p-2 text-xs text-[#4540C8]">🗣️ {persona.languageOrCulturalNote}</div>
+        <div className="mb-4 bg-[#F8F7FF] rounded-lg p-3 text-xs text-[#4540C8] border border-[#4540C8]/10">
+          🗣️ <span className="font-medium">{persona.languageOrCulturalNote}</span>
+        </div>
       )}
 
       {persona.suggestion && (
-        <div className="mt-auto pt-3 border-t border-gray-50">
-          <p className="text-[11px] font-bold text-[#4540C8] uppercase tracking-wide mb-1">Suggestion for Next Time</p>
-          <p className="text-sm text-[#0E0E1A] leading-relaxed">{persona.suggestion}</p>
+        <div className="mt-auto bg-gray-50 rounded-xl p-4 border border-gray-100 shadow-inner">
+          <p className="text-[11px] font-bold text-[#4540C8] uppercase tracking-wider mb-2 flex items-center gap-1">
+            ✨ Suggestion
+          </p>
+          <p className="text-sm text-gray-700 leading-relaxed mb-3">{persona.suggestion}</p>
           {persona.recommendedSkills && persona.recommendedSkills.length > 0 && (
-            <div className="mt-2">
-              <FreelancerRecommendation skills={persona.recommendedSkills} />
-            </div>
+            <FreelancerRecommendation skills={persona.recommendedSkills} />
           )}
         </div>
       )}
