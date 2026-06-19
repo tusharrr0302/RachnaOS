@@ -244,11 +244,8 @@ export default function OnboardingPage() {
 
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-2xl bg-rachna-indigo flex items-center justify-center">
-              <span className="text-white font-display font-bold text-lg">र</span>
-            </div>
-            <span className="font-display font-bold text-rachna-dark text-2xl">रचनाOS</span>
+          <div className="flex justify-center mb-6">
+            <img src="/logo.png" alt="RachnaOS Logo" className="h-24 w-auto object-contain" />
           </div>
 
           {/* Progress stepper */}

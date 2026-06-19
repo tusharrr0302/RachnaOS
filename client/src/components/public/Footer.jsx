@@ -27,11 +27,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-rachna-indigo flex items-center justify-center">
-                <span className="text-white font-display font-bold text-base">र</span>
-              </div>
-              <span className="font-display font-bold text-white text-xl">रचनाOS</span>
+            <div className="mb-4">
+              <img src="/logo.png" alt="RachnaOS Logo" className="h-20 w-auto object-contain" />
             </div>
             <p className="text-sm text-white/50 leading-relaxed max-w-48">
               The unified creator operating system. Stop guessing. Start building.

@@ -1,4 +1,4 @@
-// client/src/features/03-audiencelab/components/MomentumOSSection.jsx
+// client/src/features/03-audiencelab/components/MomentumOSPanel.jsx
 
 import { motion } from 'framer-motion'
 
@@ -10,7 +10,7 @@ const MOMENTUM_COLORS = {
   Stalled:      { bg: '#FEF2F2', text: '#991B1B', dot: '#EF4444', emoji: '🛑' },
 }
 
-export default function MomentumOSSection({ report }) {
+export default function MomentumOSPanel({ report }) {
   if (!report) return null
   const colors = MOMENTUM_COLORS[report.momentumLabel] || MOMENTUM_COLORS.Steady
   const circumference = 2 * Math.PI * 15.9

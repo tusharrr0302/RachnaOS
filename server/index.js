@@ -6,6 +6,7 @@ const cors        = require('cors')
 const rateLimit   = require('express-rate-limit')
 
 const authRouter             = require('./src/features/auth/auth.router')
+const analyticsHubRouter     = require('./src/features/analytics-hub/router')
 const audienceLabRouter      = require('./src/features/audiencelab/router')
 const freelancerRouter       = require('./src/features/freelancer/freelancer.router')
 const publicProfileRouter    = require('./src/features/freelancer/public-profile.router')
@@ -43,11 +44,16 @@ app.use(rateLimit({
 app.get('/health', (req, res) => res.json({ status: 'ok', env: process.env.NODE_ENV || 'development' }))
 
 // ── Routes ───────────────────────────────────────────────────────────
-app.use('/api/auth',        authRouter)
-app.use('/api/audiencelab', audienceLabRouter)
-app.use('/api/freelancer',  freelancerRouter)
-app.use('/api/freelancer',  publicProfileRouter)
-app.use('/api/marketplace', marketplaceRouter)
+console.log('Mounting routers...');
+console.log('audienceLabRouter typeof:', typeof audienceLabRouter);
+console.log('audienceLabRouter stack size:', audienceLabRouter && audienceLabRouter.stack ? audienceLabRouter.stack.length : 'none');
+
+app.use('/api/auth',          authRouter)
+app.use('/api/analytics-hub', analyticsHubRouter)
+app.use('/api/audiencelab',   audienceLabRouter)
+app.use('/api/freelancer',    freelancerRouter)
+app.use('/api/freelancer',    publicProfileRouter)
+app.use('/api/marketplace',   marketplaceRouter)
 
 // Example of a protected, role-gated route:
 // const { authenticate, attachRole } = require('./src/middleware/authenticate')

@@ -22,13 +22,13 @@ const WorkspaceListPage    = lazy(() => import('./features/workspace/WorkspaceLi
 const WorkspaceProjectPage = lazy(() => import('./features/workspace/WorkspaceProjectPage'))
 const AudienceLabPage      = lazy(() => import('./features/03-audiencelab/AudienceLabPage'))
 const AudienceLabResultPage = lazy(() => import('./pages/creator/AudienceLabResultPage'))
+const AnalyticsHubPage     = lazy(() => import('./features/13-analytics-hub/AnalyticsHubPage'))
 const FairRatePage         = lazy(() => import('./pages/creator/FairRatePage'))
 const ShieldPage           = lazy(() => import('./pages/creator/ShieldPage'))
 const ExpertConnectPage    = lazy(() => import('./pages/creator/ExpertConnectPage'))
 const MarketplacePage      = lazy(() => import('./pages/creator/MarketplacePage'))
 const AcademyPage          = lazy(() => import('./pages/creator/AcademyPage'))
 const AcademyLessonPage    = lazy(() => import('./pages/creator/AcademyLessonPage'))
-const AnalyticsPage        = lazy(() => import('./pages/creator/AnalyticsPage'))
 const SettingsPage         = lazy(() => import('./pages/creator/SettingsPage'))
 
 // Freelancer pages (lazy)
@@ -117,7 +117,7 @@ export default function App() {
             <Route path="marketplace"             element={<MarketplacePage />} />
             <Route path="academy"                 element={<AcademyPage />} />
             <Route path="academy/:moduleId"       element={<AcademyLessonPage />} />
-            <Route path="analytics"               element={<AnalyticsPage />} />
+            <Route path="analytics"               element={<AnalyticsHubPage />} />
             <Route path="settings"                element={<SettingsPage />} />
           </Route>
 

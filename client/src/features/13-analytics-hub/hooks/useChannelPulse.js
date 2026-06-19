@@ -1,4 +1,4 @@
-// client/src/features/03-audiencelab/hooks/useAudienceLab.js
+// client/src/features/03-audiencelab/hooks/useChannelPulse.js
 
 import { useState } from 'react'
 import axios from 'axios'
@@ -7,7 +7,7 @@ import { useAuth } from '../../../auth/useAuth'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL
 
-export function useAudienceLab() {
+export function useChannelPulse() {
   const { getAuthToken } = useAuth()
   const [loading, setLoading]           = useState(false)
   const [loadingStep, setLoadingStep]   = useState('')
@@ -26,12 +26,12 @@ export function useAudienceLab() {
       const headers = { Authorization: `Bearer ${token}` }
 
       setLoadingStep('Fetching channel data from YouTube...')
-      const res = await axios.post(`${API_BASE}/api/audiencelab/analyze`, { youtubeUrl }, { headers })
+      const res = await axios.post(`${API_BASE}/api/analytics-hub/analyze`, { youtubeUrl }, { headers })
       setChannelData(res.data.channelData)
       setAnalysis(res.data.analysis)
 
       setLoadingStep('Running MomentumOS comparison engine...')
-      const momentumRes = await axios.post(`${API_BASE}/api/audiencelab/momentum`, {
+      const momentumRes = await axios.post(`${API_BASE}/api/analytics-hub/momentum`, {
         channelData: res.data.channelData,
       }, { headers })
       setMomentumReport(momentumRes.data.momentumReport)
@@ -40,7 +40,7 @@ export function useAudienceLab() {
     } catch (err) {
       const msg = err.response?.data?.error || 'Analysis failed. Please try again.'
       toast.error(msg)
-      console.error('[useAudienceLab]', err)
+      console.error('[useChannelPulse]', err)
     } finally {
       setLoading(false)
       setLoadingStep('')

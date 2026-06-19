@@ -14,7 +14,7 @@ import { useAuth } from '../auth'
 const NAV_ITEMS = [
   { icon: Home,          label: 'Home',            path: '/creator' },
   { icon: Layers,        label: 'Workspace',       path: '/creator/workspace' },
-  { icon: FlaskConical,  label: 'AudienceLab',     path: '/creator/audience-lab' },
+  { icon: FlaskConical,  label: 'AudienceLab 2.0',     path: '/creator/audience-lab' },
   { icon: DollarSign,    label: 'FairRate',         path: '/creator/fair-rate' },
   { icon: ShieldCheck,   label: 'CreatorShield',   path: '/creator/shield' },
   { icon: Users,         label: 'Expert Connect',  path: '/creator/expert-connect' },
@@ -23,7 +23,7 @@ const NAV_ITEMS = [
   { icon: FileText,      label: 'Documentation',   path: '/creator/docs' },
   { icon: Tag,           label: 'Sponsorship Hub', path: '/creator/sponsorship' },
   { icon: Users2,        label: 'Team',            path: '/creator/team' },
-  { icon: BarChart3,     label: 'Analytics',       path: '/creator/analytics' },
+  { icon: BarChart3,     label: 'Analytics Hub',       path: '/creator/analytics' },
   { icon: Bot,           label: 'AI Assistant',    path: '/creator/ai' },
 ]
 
@@ -50,21 +50,7 @@ export default function CreatorLayout() {
       >
         {/* Logo */}
         <div className="px-4 py-5 flex items-center gap-3 border-b border-rachna-border">
-          <div className="w-9 h-9 rounded-xl bg-rachna-indigo flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-display font-bold text-base">र</span>
-          </div>
-          <AnimatePresence>
-            {!collapsed && (
-              <motion.span
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className="font-display font-bold text-rachna-dark text-lg leading-none"
-              >
-                रचनाOS
-              </motion.span>
-            )}
-          </AnimatePresence>
+          <img src="/logo.png" alt="RachnaOS Logo" className="h-24 w-auto object-contain flex-shrink-0" />
         </div>
 
         {/* New Project Button */}

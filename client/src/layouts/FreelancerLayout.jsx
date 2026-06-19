@@ -52,10 +52,8 @@ export default function FreelancerLayout() {
         className="flex-shrink-0 bg-white border-r border-rachna-border flex flex-col overflow-hidden relative z-20"
       >
         {/* Logo */}
-        <div className="px-4 py-5 flex items-center gap-3 border-b border-rachna-border">
-          <div className="w-9 h-9 rounded-xl bg-rachna-indigo flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-display font-bold text-base">र</span>
-          </div>
+        <div className="px-4 py-5 flex flex-col gap-1 border-b border-rachna-border">
+          <img src="/logo.png" alt="RachnaOS Logo" className="h-20 w-auto object-contain flex-shrink-0 self-start" />
           <AnimatePresence>
             {!collapsed && (
               <motion.div
@@ -63,8 +61,7 @@ export default function FreelancerLayout() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -8 }}
               >
-                <p className="font-display font-bold text-rachna-dark text-base leading-none">रचनाOS</p>
-                <p className="text-xs text-rachna-indigo font-semibold mt-0.5">Freelancer</p>
+                <p className="text-xs text-rachna-indigo font-semibold mt-0.5 ml-1">Freelancer Portal</p>
               </motion.div>
             )}
           </AnimatePresence>

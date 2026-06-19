@@ -32,11 +32,8 @@ export default function Navbar() {
       )}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-rachna-indigo flex items-center justify-center shadow-glow/50 group-hover:scale-105 transition-transform">
-              <span className="text-white font-display font-bold text-base">र</span>
-            </div>
-            <span className="font-display font-bold text-rachna-dark text-xl">रचनाOS</span>
+          <Link to="/" className="flex items-center group">
+            <img src="/logo.png" alt="RachnaOS Logo" className="h-2 w-auto object-contain transition-transform" />
           </Link>
 
           {/* Desktop Nav */}

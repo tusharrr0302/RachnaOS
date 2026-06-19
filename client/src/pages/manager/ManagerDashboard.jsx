@@ -13,10 +13,7 @@ export default function ManagerDashboard() {
       {/* ── Top navbar ── */}
       <header className="h-14 bg-white border-b border-rachna-border flex items-center justify-between px-6 sticky top-0 z-10">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-rachna-indigo flex items-center justify-center">
-            <span className="text-white font-display font-bold text-sm">र</span>
-          </div>
-          <span className="font-display font-bold text-rachna-dark">रचनाOS</span>
+          <img src="/logo.png" alt="RachnaOS Logo" className="h-20 w-auto object-contain" />
           <span className="text-rachna-border mx-2">|</span>
           <span className="text-sm text-rachna-muted font-medium">Manager</span>
         </div>

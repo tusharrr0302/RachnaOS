@@ -26,12 +26,7 @@ export default function SignUpPage() {
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* ── Left brand panel ── */}
       <div className="hidden lg:flex bg-rachna-indigo flex-col justify-between p-12">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
-            <span className="text-white font-display font-bold text-base">र</span>
-          </div>
-          <span className="font-display font-bold text-white text-xl">रचनाOS</span>
-        </div>
+        <img src="/logo.png" alt="RachnaOS Logo" className="h-20 w-auto object-contain drop-shadow-md" />
 
         <div>
           <h2 className="font-display font-extrabold text-white text-4xl leading-tight mb-4">
@@ -73,11 +68,8 @@ export default function SignUpPage() {
           className="w-full max-w-md flex flex-col items-center gap-6"
         >
           {/* Mobile logo */}
-          <div className="flex items-center gap-2 lg:hidden self-start">
-            <div className="w-8 h-8 rounded-xl bg-rachna-indigo flex items-center justify-center">
-              <span className="text-white font-display font-bold text-sm">र</span>
-            </div>
-            <span className="font-display font-bold text-rachna-dark text-lg">रचनाOS</span>
+          <div className="self-start lg:hidden">
+            <img src="/logo.png" alt="RachnaOS Logo" className="h-20 w-auto object-contain" />
           </div>
 
           {!isMock && (

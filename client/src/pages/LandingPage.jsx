@@ -471,11 +471,8 @@ export default function LandingPage() {
                   <div className="bg-rachna-surface rounded-[2rem] overflow-hidden" style={{ aspectRatio: '9/19' }}>
                     {/* Mini workspace UI */}
                     <div className="bg-white h-full p-3 flex flex-col gap-2 overflow-hidden">
-                      <div className="flex items-center gap-1.5 pb-2 border-b border-rachna-border">
-                        <div className="w-5 h-5 rounded-lg bg-rachna-indigo flex items-center justify-center">
-                          <span className="text-white font-bold text-[8px]">र</span>
-                        </div>
-                        <span className="text-[10px] font-display font-bold text-rachna-dark">रचनाOS</span>
+                      <div className="pb-2 border-b border-rachna-border">
+                        <img src="/logo.png" alt="RachnaOS Logo" className="h-14 w-auto object-contain" />
                       </div>
                       <div className="bg-rachna-indigo rounded-xl p-2 text-white">
                         <p className="text-[9px] font-semibold opacity-70">AudienceLab Score</p>

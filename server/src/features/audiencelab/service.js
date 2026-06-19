@@ -1,225 +1,146 @@
-// server/src/features/audiencelab/service.js
-// All Claude claude-sonnet-4-6 AI calls for AudienceLab + MomentumOS
+const OpenAI = require("openai");
+const { PERSONA_AGENTS } = require("./personas");
 
-const { OpenAI } = require('openai')
-
-const openai = new OpenAI({
+// Initialize clients
+const groq = new OpenAI({
   apiKey: process.env.GROQ_API_KEY,
-  baseURL: 'https://api.groq.com/openai/v1',
-})
+  baseURL: "https://api.groq.com/openai/v1",
+});
 
-// ─────────────────────────────────────────────────────────────────────────────
-// AUDIENCE LAB — Deep Channel Analysis
-// ─────────────────────────────────────────────────────────────────────────────
-exports.runAudienceLabAnalysis = async (channelData) => {
-  const prompt = buildAudienceLabPrompt(channelData)
-
-  const completion = await openai.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
-    response_format: { type: 'json_object' },
-    messages: [
-      {
-        role: 'system',
-        content: `You are RachnaOS's AudienceLab AI — an expert YouTube channel analyst with deep knowledge of content strategy, audience psychology, thumbnail science, and growth mechanics for Indian and global YouTube creators.
-
-Your job is to analyze YouTube channel data and produce a brutally honest, deeply insightful, actionable analysis. Never give generic advice. Every insight must reference specific data points from the channel.
-
-Always respond with a valid JSON object exactly matching this structure — no markdown fences, no preamble:
+const synthesisSystemPrompt = `You are a senior Indian YouTube content strategist synthesizing focus-group data into one clear, actionable report.
+        
+You MUST respond with a valid JSON object matching exactly this schema:
 {
-  "overallHealthScore": <number 0-100>,
-  "healthLabel": "Excellent|Good|Average|Needs Work|Critical",
-  "quickWins": [<string>, ...],
-  "contentStrategy": {
-    "consistencyScore": <0-100>,
-    "postingFrequencyAssessment": "<string>",
-    "titlePatterns": "<analysis of their title style>",
-    "thumbnailStyle": "<analysis of thumbnail patterns>",
-    "hookQuality": "<assessment based on retention-to-views ratio>",
-    "contentGaps": ["<gap1>", "<gap2>", "<gap3>"]
+  "overallVerdict": "string",
+  "predictedCTR": {
+    "tier1": "string", "tier2": "string", "tier3": "string", "blended": "string"
   },
-  "audienceSignals": {
-    "engagementRate": <percentage>,
-    "engagementHealth": "High|Medium|Low",
-    "likeToViewRatio": "<value>%",
-    "commentSentiment": "Positive|Neutral|Mixed",
-    "estimatedAudiencePersonas": [
-      { "persona": "<name>", "percentage": <0-100>, "description": "<what this audience segment looks like>" }
-    ]
+  "predictedRetention": {
+    "tier1": "string", "tier2": "string", "tier3": "string"
   },
-  "growthDiagnosis": {
-    "currentPhase": "Launching|Growing|Plateauing|Declining|Scaling",
-    "primaryBlocker": "<the single biggest thing stopping growth>",
-    "secondaryBlockers": ["<blocker2>", "<blocker3>"],
-    "growthOpportunities": ["<opp1>", "<opp2>", "<opp3>"]
-  },
-  "thumbnailAudit": {
-    "score": <0-100>,
-    "dominantStyle": "<description of their thumbnail style>",
-    "whatWorking": "<what's working in their thumbnails>",
-    "whatNeedsWork": "<what needs improvement>",
-    "recommendation": "<specific actionable thumbnail advice>"
-  },
-  "titleAudit": {
-    "score": <0-100>,
-    "currentPattern": "<their title writing pattern>",
-    "ctrPotential": "High|Medium|Low",
-    "recommendation": "<specific title improvement advice with examples>"
-  },
-  "topVideoInsight": {
-    "title": "<top video title>",
-    "whyItWorked": "<analysis of why this video performed best>",
-    "replicableElements": ["<element1>", "<element2>"]
-  },
-  "weeklyActionPlan": [
-    { "day": "Monday", "action": "<specific task>" },
-    { "day": "Wednesday", "action": "<specific task>" },
-    { "day": "Friday", "action": "<specific task>" }
-  ],
-  "monetizationReadiness": {
-    "score": <0-100>,
-    "isYPPEligible": <boolean>,
-    "brandDealPotential": "Low|Medium|High|Very High",
-    "estimatedCPM": "<range in INR>",
-    "sponsorshipRate": "<estimated rate per integration in INR>"
-  }
-}`
-      },
+  "vernacularPacingAnalysis": {
+    "verdict": "string",
+    "riskTimestamps": [
       {
-        role: 'user',
-        content: prompt
+        "approxPosition": "string",
+        "issue": "string",
+        "affectedTiers": ["string"]
       }
     ]
-  })
-
-  const text = completion.choices[0].message.content
-  try {
-    return JSON.parse(text)
-  } catch {
-    const match = text.match(/\{[\s\S]*\}/)
-    return match ? JSON.parse(match[0]) : { error: 'Parse failed', raw: text }
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// MOMENTUM OS — Creator Comparison Engine
-// ─────────────────────────────────────────────────────────────────────────────
-exports.runMomentumAnalysis = async (channelData, benchmarks) => {
-  const benchmarkSummary = benchmarks.length > 0
-    ? benchmarks.map(b =>
-        `- ${b.channel_name}: ${Number(b.subscriber_count).toLocaleString()} subs, ${Number(b.avg_views_per_video).toLocaleString()} avg views, ${b.niche} niche`
-      ).join('\n')
-    : 'No exact benchmark matches found. Use general industry knowledge for creators at this subscriber tier.'
-
-  const completion = await openai.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
-    response_format: { type: 'json_object' },
-    messages: [
-      {
-        role: 'system',
-        content: `You are RachnaOS's MomentumOS engine. You compare creators with others who were at similar subscriber counts and stats, and tell them how they're doing relative to that benchmark — with specific named creators when possible (e.g., "When CarryMinati had 50K subs, his avg views were...").
-
-Be motivating but honest. Reference real creators from India and globally.
-
-Respond ONLY with valid JSON matching this exact structure:
-{
-  "momentumScore": <0-100>,
-  "momentumLabel": "Rocket|Accelerating|Steady|Slowing|Stalled",
-  "overallVerdict": "<2 sentence honest verdict>",
-  "comparedCreators": [
-    {
-      "creatorName": "<real creator name>",
-      "platform": "YouTube",
-      "niche": "<their niche>",
-      "atSimilarStageStats": {
-        "subscribersAtThatTime": <number>,
-        "avgViewsPerVideo": <number>,
-        "postingFrequency": "<X times per week>"
-      },
-      "howTheyGrew": "<specific strategy they used>",
-      "lessonForThisCreator": "<what this creator can learn from them>"
-    }
-  ],
-  "performanceVsBenchmark": {
-    "viewsComparison": "Above Average|Average|Below Average",
-    "engagementComparison": "Above Average|Average|Below Average",
-    "growthRateComparison": "Above Average|Average|Below Average",
-    "summary": "<honest comparison summary>"
   },
-  "growthPrediction": {
-    "at6Months": { "subscribers": "<estimated range>", "condition": "<if they follow this advice>" },
-    "at12Months": { "subscribers": "<estimated range>", "condition": "<if they follow this advice>" }
+  "thumbnailFeedback": "string",
+  "hookFeedback": "string",
+  "suggestedImprovements": ["string"],
+  "brandValuationImpact": {
+    "verdict": "string",
+    "ratePotential": "string (Lowers rate, Neutral, Increases rate, Significantly increases rate)",
+    "reasoning": "string"
   },
-  "momentumSignals": [
-    { "signal": "positive|negative|neutral", "insight": "<specific insight>" }
-  ],
-  "burnoutRisk": {
-    "level": "Low|Medium|High",
-    "reason": "<why>",
-    "advice": "<specific advice to avoid burnout>"
-  },
-  "weeklyFocusAreas": ["<focus1>", "<focus2>", "<focus3>"]
-}`
-      },
-      {
-        role: 'user',
-        content: `Analyze this creator's MomentumOS comparison:
+  "bestPerformingPersonas": ["string"],
+  "worstPerformingPersonas": ["string"]
+}`;
 
-CREATOR STATS:
-- Channel: ${channelData.channelName}
-- Subscribers: ${channelData.stats.subscribers.toLocaleString()}
-- Total Views: ${channelData.stats.totalViews.toLocaleString()}
-- Total Videos: ${channelData.stats.totalVideos}
-- Avg Views/Video: ${channelData.computed.avgViewsPerVideo.toLocaleString()}
-- Like Ratio: ${channelData.computed.avgLikeRatio}%
-- Posting Frequency: Every ${channelData.computed.postingFrequencyDays} days
-- Topics: ${channelData.topics?.join(', ')}
+function buildMessageContent({ title, hook, scriptOutline, thumbnailBase64, thumbnailMimeType }) {
+  const textContent = `Evaluate this YouTube video concept as your persona would react to it:
 
-BENCHMARK CREATORS AT SIMILAR STAGE:
-${benchmarkSummary}
+TITLE: "${title}"
+HOOK (first 5-15 seconds): "${hook}"
+SCRIPT OUTLINE: ${scriptOutline || "Not provided"}
 
-Generate the MomentumOS comparison report.`
+React authentically.`;
+
+  const content = [
+    { type: "text", text: textContent }
+  ];
+
+  if (thumbnailBase64) {
+    content.push({
+      type: "image_url",
+      image_url: {
+        url: `data:${thumbnailMimeType || "image/jpeg"};base64,${thumbnailBase64}`
       }
-    ]
-  })
-
-  const text = completion.choices[0].message.content
-  try {
-    return JSON.parse(text)
-  } catch {
-    const match = text.match(/\{[\s\S]*\}/)
-    return match ? JSON.parse(match[0]) : { error: 'Parse failed', raw: text }
+    });
   }
+
+  return content;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────────────────────
-function buildAudienceLabPrompt(channelData) {
-  return `Analyze this YouTube channel in full detail:
+// ─────────────────────────────────────────────
+// RUN FULL FOCUS GROUP SIMULATION
+// ─────────────────────────────────────────────
+exports.runFocusGroupSimulation = async (input) => {
+  const content = buildMessageContent(input);
 
-CHANNEL OVERVIEW:
-- Name: ${channelData.channelName}
-- Handle: ${channelData.handle}
-- Country: ${channelData.country}
-- Created: ${new Date(channelData.createdAt).toLocaleDateString()}
-- Description: ${channelData.description}
-- Topics: ${channelData.topics?.join(', ')}
-- Keywords: ${channelData.keywords}
+  // Step 1: All 6 persona agents run IN PARALLEL on GROQ
+  const personaResults = await Promise.all(
+    PERSONA_AGENTS.map(async (persona) => {
+      try {
+        const hasImage = !!input.thumbnailBase64;
+        // Groq vision model for thumbnails, versatile for text-only
+        const model = hasImage ? "llama-3.2-90b-vision-preview" : "llama-3.3-70b-versatile";
+        
+        const systemInstruction = `${persona.systemPrompt}
+        
+You MUST respond with a valid JSON object using the exact following schema:
+{
+  "personaId": "string",
+  "reaction": "string (Authentic first-person reaction)",
+  "wouldClick": boolean,
+  "clickReason": "string",
+  "predictedAction": "string (one of: click_and_watch_full, click_then_drop_early, click_then_skip_to_end, scroll_past, share_with_friend)",
+  "estimatedRetentionDropPoint": "string",
+  "languageOrCulturalNote": "string",
+  "sentimentScore": number (0-100)
+}`;
 
-STATS:
-- Subscribers: ${channelData.stats.subscribers.toLocaleString()}
-- Total Views: ${channelData.stats.totalViews.toLocaleString()}
-- Total Videos: ${channelData.stats.totalVideos}
-- Avg Views/Video: ${channelData.computed.avgViewsPerVideo.toLocaleString()}
-- Avg Like Ratio: ${channelData.computed.avgLikeRatio}%
-- Posting Frequency: Every ${channelData.computed.postingFrequencyDays} days
+        const response = await groq.chat.completions.create({
+          model: model,
+          messages: [
+            { role: "system", content: systemInstruction },
+            { role: "user", content: content }
+          ],
+          response_format: { type: "json_object" },
+          temperature: 0.8,
+        });
 
-RECENT 20 VIDEOS (title | views | likes | comments | published):
-${channelData.recentVideos.slice(0, 20).map(v =>
-  `"${v.title}" | ${v.views.toLocaleString()} views | ${v.likes.toLocaleString()} likes | ${v.comments.toLocaleString()} comments | ${new Date(v.publishedAt).toLocaleDateString()}`
-).join('\n')}
+        const text = response.choices[0].message.content;
+        const reaction = JSON.parse(text);
+        return { ...persona, ...reaction };
+      } catch (err) {
+        console.error(`Persona ${persona.id} failed on Groq:`, err.message);
+        return { ...persona, error: true, reaction: "This agent failed to respond." };
+      }
+    })
+  );
 
-TOP VIDEO: "${channelData.computed.topVideo?.title}" with ${channelData.computed.topVideo?.views?.toLocaleString()} views
+  // Step 2: Synthesis agent reads all 6 reactions and produces one unified report using GPT-4o
+  const synthesisPrompt = `You are RachnaOS's MASTER SYNTHESIS AGENT for AudienceLab.
+You receive 6 independent persona reactions to the same video concept and must produce ONE unified focus-group report.
 
-Provide the complete AudienceLab analysis JSON.`
-}
+Pay special attention to the VERNACULAR EDGE: where Tier-2/Tier-3 personas react differently from Tier-1 personas
+due to language, pacing, or cultural fit — this gap is RachnaOS's single most valuable insight.
+
+PERSONA REACTIONS:
+${JSON.stringify(personaResults, null, 2)}
+
+VIDEO CONCEPT:
+Title: "${input.title}"
+Hook: "${input.hook}"
+Script Outline: ${input.scriptOutline || "Not provided"}
+
+Produce the synthesized JSON report.`;
+
+  const synthesisResponse = await groq.chat.completions.create({
+    model: "llama-3.3-70b-versatile",
+    messages: [
+      { role: "system", content: synthesisSystemPrompt },
+      { role: "user", content: synthesisPrompt }
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0.7,
+  });
+
+  const synthesis = JSON.parse(synthesisResponse.choices[0].message.content);
+
+  return { personaResults, synthesis };
+};
