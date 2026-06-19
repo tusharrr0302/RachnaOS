@@ -223,3 +223,64 @@ TOP VIDEO: "${channelData.computed.topVideo?.title}" with ${channelData.computed
 
 Provide the complete AudienceLab analysis JSON.`
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// VIDEO DEEP DIVE — Single Video Analysis
+// ─────────────────────────────────────────────────────────────────────────────
+exports.runVideoDeepDiveAnalysis = async (video, channelAverages) => {
+  const completion = await openai.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
+    response_format: { type: 'json_object' },
+    messages: [
+      {
+        role: 'system',
+        content: `You are an expert YouTube content strategist. Your goal is to analyze a single video's metadata and performance compared to the channel's average to determine WHY it performed the way it did.
+
+Always respond with a valid JSON object exactly matching this structure:
+{
+  "overallVerdict": "<1-2 sentence brutal honesty about why this worked or failed>",
+  "titleAnalysis": {
+    "hookQuality": "Excellent|Good|Average|Poor",
+    "psychologicalTriggers": ["<trigger 1>", "<trigger 2>"],
+    "ctrPotential": "High|Medium|Low"
+  },
+  "audienceSentiment": {
+    "estimatedSentiment": "Positive|Neutral|Mixed",
+    "engagementBreakdown": "<explanation of comment/like ratios relative to views>"
+  },
+  "thumbnailPrediction": {
+    "likelyDesign": "<what the thumbnail likely did based on the title>",
+    "effectiveness": "<guess on how effective it was>"
+  },
+  "replicableElements": ["<what to repeat 1>", "<what to repeat 2>"]
+}`
+      },
+      {
+        role: 'user',
+        content: `Analyze this video:
+
+VIDEO DATA:
+- Title: "${video.title}"
+- Views: ${video.views?.toLocaleString()}
+- Likes: ${video.likes?.toLocaleString()}
+- Comments: ${video.comments?.toLocaleString()}
+- Like Ratio: ${video.likeRatio}%
+
+CHANNEL AVERAGES:
+- Average Views/Video: ${channelAverages?.avgViewsPerVideo?.toLocaleString() || 'Unknown'}
+- Average Like Ratio: ${channelAverages?.avgLikeRatio || 'Unknown'}%
+
+Provide the complete Video Deep Dive JSON.`
+      }
+    ]
+  })
+
+  const text = completion.choices[0].message.content
+  try {
+    return JSON.parse(text)
+  } catch {
+    const match = text.match(/\{[\s\S]*\}/)
+    return match ? JSON.parse(match[0]) : { error: 'Parse failed', raw: text }
+  }
+}
+

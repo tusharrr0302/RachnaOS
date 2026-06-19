@@ -28,8 +28,9 @@ router.get('/history',   authenticate, getMyAnalyses)
 
 module.exports = router
 
-const { getOAuthUrl, oauthCallback, getDeepVideoMetrics } = require('./controller');
+const { getOAuthUrl, oauthCallback, getDeepVideoMetrics, analyzeVideo } = require('./controller');
 
 router.get('/oauth/url', authenticate, getOAuthUrl);
 router.get('/oauth/callback', oauthCallback); // Public callback
 router.get('/deep-metrics', authenticate, getDeepVideoMetrics);
+router.post('/analyze-video', authenticate, analyzeVideo);

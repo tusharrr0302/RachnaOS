@@ -1,7 +1,7 @@
 // server/src/features/audiencelab/controller.js
 
 const { extractChannelIdentifier, resolveToChannelId, fetchChannelFullData } = require('../../../utils/youtubeParser')
-const { runAudienceLabAnalysis, runMomentumAnalysis } = require('./service')
+const { runAudienceLabAnalysis, runMomentumAnalysis, runVideoDeepDiveAnalysis } = require('./service')
 const { supabase } = require('../../../lib/supabase')
 
 exports.analyzeChannel = async (req, res) => {
@@ -169,6 +169,19 @@ exports.getDeepVideoMetrics = async (req, res) => {
 
     res.json({ success: true, retentionCurve: retentionCurve.rows, trafficSources: trafficSources.rows });
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.analyzeVideo = async (req, res) => {
+  try {
+    const { video, channelAverages } = req.body;
+    if (!video) return res.status(400).json({ error: 'Video data is required' });
+
+    const analysis = await runVideoDeepDiveAnalysis(video, channelAverages);
+    res.json({ success: true, analysis });
+  } catch (err) {
+    console.error('[analyzeVideo]', err.message);
     res.status(500).json({ error: err.message });
   }
 };
