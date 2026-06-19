@@ -229,7 +229,7 @@ Provide the complete AudienceLab analysis JSON.`
 // ─────────────────────────────────────────────────────────────────────────────
 exports.runVideoDeepDiveAnalysis = async (video, channelAverages) => {
   const completion = await openai.chat.completions.create({
-    model: 'llama3-8b-8192', // Using the extremely fast 8B model instead of 70B for instant UI response
+    model: 'llama-3.1-8b-instant', // Using the extremely fast 8B model instead of 70B for instant UI response
     response_format: { type: 'json_object' },
     messages: [
       {

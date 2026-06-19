@@ -81,7 +81,7 @@ exports.runFocusGroupSimulation = async (input) => {
       try {
         const hasImage = !!input.thumbnailBase64;
         // Groq vision model for thumbnails, versatile for text-only
-        const model = hasImage ? "llama-3.2-90b-vision-preview" : "llama-3.3-70b-versatile";
+        const model = hasImage ? "llama-3.2-90b-vision-preview" : "llama-3.1-8b-instant";
         
         const systemInstruction = `${persona.systemPrompt}
         
@@ -137,7 +137,7 @@ Script Outline: ${input.scriptOutline || "Not provided"}
 Produce the synthesized JSON report.`;
 
   const synthesisResponse = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: "llama-3.1-8b-instant",
     messages: [
       { role: "system", content: synthesisSystemPrompt },
       { role: "user", content: synthesisPrompt }
