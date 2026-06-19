@@ -1,3 +1,5 @@
+import FreelancerRecommendation from "../../13-analytics-hub/components/FreelancerRecommendation";
+
 const TIER_COLORS = {
   "Tier-1": { bg: "#EEF2FF", text: "#3730A3" },
   "Tier-2": { bg: "#FFF7ED", text: "#9A3412" },
@@ -17,7 +19,7 @@ export default function PersonaAgentCard({ persona }) {
   const action = ACTION_LABELS[persona.predictedAction] || { label: persona.predictedAction, color: "#6B6B80" };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+    <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex flex-col h-full">
       <div className="flex items-start justify-between mb-3">
         <div>
           <p className="font-semibold text-[#0E0E1A] text-sm">{persona.label}</p>
@@ -28,12 +30,26 @@ export default function PersonaAgentCard({ persona }) {
         </span>
       </div>
       <p className="text-sm text-gray-600 italic mb-3">"{persona.reaction}"</p>
-      <div className="flex items-center justify-between">
+      
+      <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-semibold" style={{ color: action.color }}>● {action.label}</span>
         <span className="text-xs text-gray-400">Sentiment: {persona.sentimentScore}/100</span>
       </div>
+
       {persona.languageOrCulturalNote && (
-        <div className="mt-3 bg-[#F8F7FF] rounded-lg p-2 text-xs text-[#4540C8]">🗣️ {persona.languageOrCulturalNote}</div>
+        <div className="mb-3 bg-[#F8F7FF] rounded-lg p-2 text-xs text-[#4540C8]">🗣️ {persona.languageOrCulturalNote}</div>
+      )}
+
+      {persona.suggestion && (
+        <div className="mt-auto pt-3 border-t border-gray-50">
+          <p className="text-[11px] font-bold text-[#4540C8] uppercase tracking-wide mb-1">Suggestion for Next Time</p>
+          <p className="text-sm text-[#0E0E1A] leading-relaxed">{persona.suggestion}</p>
+          {persona.recommendedSkills && persona.recommendedSkills.length > 0 && (
+            <div className="mt-2">
+              <FreelancerRecommendation skills={persona.recommendedSkills} />
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

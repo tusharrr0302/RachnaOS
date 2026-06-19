@@ -6,6 +6,7 @@ import VernacularPacingAnalysis from './components/VernacularPacingAnalysis';
 import AggregatedVerdict from './components/AggregatedVerdict';
 import BrandValuationImpact from './components/BrandValuationImpact';
 import SuggestedImprovements from './components/SuggestedImprovements';
+import TopCreatorPerspective from './components/TopCreatorPerspective';
 
 export default function AudienceLabPage() {
   const { loading, loadingStep, personaResults, synthesis, runSimulation } = useFocusGroupSimulation();
@@ -42,7 +43,12 @@ export default function AudienceLabPage() {
             </div>
           )}
 
-          {synthesis && <AggregatedVerdict verdict={synthesis.overallVerdict} />}
+          {synthesis && (
+            <div className="space-y-6">
+              <TopCreatorPerspective perspective={synthesis.topCreatorPerspective} />
+              <AggregatedVerdict verdict={synthesis.overallVerdict} />
+            </div>
+          )}
 
           {personaResults && <FocusGroupGrid personaResults={personaResults} />}
 

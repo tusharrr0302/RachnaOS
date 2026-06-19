@@ -31,6 +31,10 @@ You MUST respond with a valid JSON object matching exactly this schema:
   "thumbnailFeedback": "string",
   "hookFeedback": "string",
   "suggestedImprovements": ["string"],
+  "topCreatorPerspective": {
+    "creatorName": "string",
+    "whatTheyWouldDo": "string"
+  },
   "brandValuationImpact": {
     "verdict": "string",
     "ratePotential": "string (Lowers rate, Neutral, Increases rate, Significantly increases rate)",
@@ -90,7 +94,9 @@ You MUST respond with a valid JSON object using the exact following schema:
   "predictedAction": "string (one of: click_and_watch_full, click_then_drop_early, click_then_skip_to_end, scroll_past, share_with_friend)",
   "estimatedRetentionDropPoint": "string",
   "languageOrCulturalNote": "string",
-  "sentimentScore": number (0-100)
+  "sentimentScore": number (0-100),
+  "suggestion": "string (Detailed suggestion on how to improve this video for this persona)",
+  "recommendedSkills": ["string"] (Array of marketplace skills needed for this suggestion, e.g., "Thumbnail Design", "Scriptwriting". Empty if none)
 }`;
 
         const response = await groq.chat.completions.create({
