@@ -21,8 +21,7 @@ const NAV_ITEMS = [
   { icon: ShoppingBag,   label: 'Marketplace',     path: '/creator/marketplace' },
   { icon: FileText,      label: 'Documentation',    path: '/creator/academy' },
   { icon: Tag,           label: 'Sponsorship Hub', path: '/creator/sponsorship' },
-  { icon: Users2,        label: 'Team',            path: '/creator/team' },
-  { icon: BarChart3,     label: 'Analytics Hub',       path: '/creator/analytics' },
+  { icon: BarChart3,     label: 'Analytics Hub',   path: '/creator/analytics' },
   { icon: Bot,           label: 'AI Assistant',    path: '/creator/ai' },
 ]
 
