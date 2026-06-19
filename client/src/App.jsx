@@ -29,6 +29,7 @@ const ExpertConnectPage    = lazy(() => import('./pages/creator/ExpertConnectPag
 const MarketplacePage      = lazy(() => import('./pages/creator/MarketplacePage'))
 const AcademyPage          = lazy(() => import('./pages/creator/AcademyPage'))
 const AcademyLessonPage    = lazy(() => import('./pages/creator/AcademyLessonPage'))
+const SponsorshipPage      = lazy(() => import('./pages/creator/SponsorshipPage'))
 const SettingsPage         = lazy(() => import('./pages/creator/SettingsPage'))
 
 // Freelancer pages (lazy)
@@ -118,6 +119,7 @@ export default function App() {
             <Route path="academy"                 element={<AcademyPage />} />
             <Route path="academy/:moduleId"       element={<AcademyLessonPage />} />
             <Route path="analytics"               element={<AnalyticsHubPage />} />
+            <Route path="sponsorship"             element={<SponsorshipPage />} />
             <Route path="settings"                element={<SettingsPage />} />
           </Route>
 
